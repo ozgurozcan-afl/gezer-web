@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gezer — Explorer-style File Manager for Mac</title>
+<meta name="description" content="Free, native file manager for macOS in the style of Windows Explorer: dual pane with F5/F6, tabs, ⌘K command palette, folder compare & sync, disk usage map, archives as folders and a built-in terminal.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="canonical" href="https://ozgurozcan-afl.github.io/gezer-web/">
+<meta name="theme-color" content="#070a12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Gezer">
+<meta property="og:url" content="https://ozgurozcan-afl.github.io/gezer-web/">
+<meta property="og:title" content="Gezer — Explorer-style File Manager for Mac">
+<meta property="og:description" content="Free, native file manager for macOS: dual pane with F5/F6, tabs, ⌘K command palette, folder compare & sync, disk usage map and a built-in terminal.">
+<meta property="og:image" content="https://ozgurozcan-afl.github.io/gezer-web/assets/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Gezer — The Windows Explorer–style file manager for your Mac.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gezer — Explorer-style File Manager for Mac">
+<meta name="twitter:description" content="Free, native file manager for macOS: dual pane, tabs, ⌘K command palette, folder compare & sync and a built-in terminal.">
+<meta name="twitter:image" content="https://ozgurozcan-afl.github.io/gezer-web/assets/og.jpg">
+<meta name="twitter:image:alt" content="Gezer — The Windows Explorer–style file manager for your Mac.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070a12;
+  --bg2: #0c1020;
+  --line: rgba(255,255,255,.08);
+  --text: #eef1f8;
+  --muted: #949cb4;
+  --dim: #6c7590;
+  --blue: #2f6fd6;
+  --sky: #6ea2ff;
+  --navy: #1b3f8f;
+  --amber: #f2b233;
+  --gold: #ffd866;
+  --green: #3fd68a;
+  --red: #ff5d6c;
+  --violet: #9b85ff;
+  --accent: var(--sky);
+  --accent2: var(--amber);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+h1, h2, h3 { font-family: "Space Grotesk", Inter, sans-serif; letter-spacing: -.02em; }
+.mono, code, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
+kbd { font-size: .85em; padding: 1px 6px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-bottom-width: 2px; color: var(--text); white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- nav ---------- */
+nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px clamp(16px, 4vw, 40px);
+  backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  background: rgba(7,10,18,.6);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s;
+}
+nav.scrolled { border-bottom-color: var(--line); }
+nav .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-family: "Space Grotesk"; font-size: 19px; }
+nav .brand img { width: 32px; height: 32px; }
+nav .spacer { flex: 1; }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; font-size: 13px; flex: none; }
+.lang button { background: none; border: 0; color: var(--muted); padding: 5px 11px; cursor: pointer; font: inherit; }
+.lang button.on { background: rgba(255,255,255,.12); color: var(--text); }
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 11px 20px; border-radius: 999px; font-weight: 600;
+  background: linear-gradient(135deg, #4c8cf5, var(--blue) 50%, var(--navy));
+  color: #fff; box-shadow: 0 8px 30px -8px rgba(47,111,214,.75), inset 0 1px 0 rgba(255,255,255,.2);
+  transition: transform .2s, box-shadow .2s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px -10px rgba(47,111,214,.95), 0 0 0 1px rgba(255,216,102,.35), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn.small { padding: 8px 15px; font-size: 14px; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.ghost { padding: 11px 18px; border-radius: 999px; border: 1px solid var(--line); color: var(--text); font-weight: 500; transition: background .2s; white-space: nowrap; }
+.ghost:hover { background: rgba(255,255,255,.06); }
+nav .ghost { padding: 7px 14px; font-size: 14px; }
+
+/* ---------- hero ---------- */
+.hero {
+  min-height: 100vh; display: grid; place-items: center; text-align: center;
+  padding: 120px 20px 90px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; width: 1100px; height: 1100px; left: 50%; top: 42%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(47,111,214,.32), rgba(47,111,214,.08) 40%, transparent 65%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ""; position: absolute; width: 700px; height: 700px; left: 62%; top: 78%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(242,178,51,.16), transparent 62%);
+  pointer-events: none;
+}
+.gridbg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 75%);
+          mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 75%);
+}
+.floaters { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.floaters span { position: absolute; display: flex; align-items: center; gap: 8px; padding: 6px 11px; border-radius: 9px; font-size: 12.5px; color: #c9d0e2; background: rgba(255,255,255,.04); border: 1px solid var(--line); backdrop-filter: blur(4px); animation: drift 14s ease-in-out infinite; white-space: nowrap; }
+.floaters span:nth-child(2) { animation-delay: -3s; } .floaters span:nth-child(3) { animation-delay: -6s; } .floaters span:nth-child(4) { animation-delay: -9s; } .floaters span:nth-child(5) { animation-delay: -11s; }
+@keyframes drift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+.hero-inner { position: relative; max-width: 880px; z-index: 2; }
+.logo-orb { position: relative; width: 168px; height: 168px; margin: 0 auto 30px; }
+.logo-orb img { width: 100%; height: 100%; position: relative; z-index: 2; filter: drop-shadow(0 22px 50px rgba(47,111,214,.6)); animation: float 6s ease-in-out infinite; }
+.logo-orb .ring { position: absolute; inset: -6px; border-radius: 44px; border: 1px solid rgba(255,216,102,.35); animation: pulse 3.2s ease-out infinite; }
+.logo-orb .ring:nth-child(2) { animation-delay: 1.06s; }
+.logo-orb .ring:nth-child(3) { animation-delay: 2.13s; }
+@keyframes pulse { from { transform: scale(.75); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.hero h1 { font-size: clamp(42px, 7.4vw, 88px); line-height: 1.03; font-weight: 700; }
+.grad {
+  background: linear-gradient(100deg, #fff 10%, #9cc0ff 38%, var(--sky) 58%, var(--gold) 88%);
+  background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shine 8s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+.hero p.lead { font-size: clamp(17px, 2.2vw, 21px); color: var(--muted); max-width: 660px; margin: 22px auto 34px; }
+.hero .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
+.hero .meta { color: var(--muted); font-size: 13px; margin-top: 18px; }
+.scroll-hint { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; letter-spacing: .14em; text-transform: uppercase; z-index: 2; }
+.scroll-hint span { width: 22px; height: 36px; border: 1.5px solid var(--muted); border-radius: 12px; position: relative; }
+.scroll-hint span::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; border-radius: 2px; background: var(--text); transform: translateX(-50%); animation: wheel 1.8s infinite; }
+@keyframes wheel { 0% { opacity: 0; transform: translate(-50%, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 12px); } }
+
+/* ---------- story ---------- */
+.story { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(20px, 4vw, 60px); padding: 0 clamp(16px, 4vw, 56px); max-width: 1400px; margin: 0 auto; }
+.story::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(800px 600px at 75% 50%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%),
+              radial-gradient(700px 500px at 20% 80%, color-mix(in srgb, var(--accent2) 10%, transparent), transparent 70%);
+  opacity: var(--glow, 0); transition: opacity .6s;
+}
+.steps { position: relative; min-width: 0; }
+.step { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 10vh 0; opacity: .25; transition: opacity .5s; }
+.step.active { opacity: 1; }
+.step .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 14px; }
+.step .kicker i { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-style: normal; background: color-mix(in srgb, var(--accent) 18%, transparent); font-size: 14px; }
+.step h2 { font-size: clamp(28px, 3.8vw, 46px); line-height: 1.1; margin-bottom: 16px; }
+.step p { color: var(--muted); font-size: 17px; max-width: 480px; }
+.step ul { list-style: none; margin-top: 18px; display: grid; gap: 8px; }
+.step li { display: flex; gap: 10px; color: #cbd2e4; font-size: 15px; }
+.step li::before { content: "▸"; color: var(--accent); flex: none; }
+.stage { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; min-width: 0; }
+.progress { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 9px; z-index: 40; opacity: 0; transition: opacity .4s; pointer-events: none; }
+.progress.show { opacity: 1; pointer-events: auto; }
+.progress a { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.22); transition: all .3s; }
+.progress a.on { background: var(--accent); height: 22px; border-radius: 4px; }
+
+/* ---------- mock window ---------- */
+.window {
+  width: 100%; aspect-ratio: 16 / 10.6; max-height: 82vh;
+  background: linear-gradient(180deg, #141927, #0e121c);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 14px;
+  box-shadow: 0 50px 120px -30px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.4), 0 0 120px -40px color-mix(in srgb, var(--accent) 55%, transparent);
+  display: grid; grid-template-columns: 23% minmax(0, 1fr); overflow: hidden; position: relative;
+  font-size: 12.5px; transition: box-shadow 1s;
+}
+.side { border-right: 1px solid var(--line); padding: 12px 8px; display: flex; flex-direction: column; gap: 1px; overflow: hidden; background: rgba(255,255,255,.025); min-width: 0; }
+.lights { display: flex; gap: 7px; padding: 2px 6px 10px; }
+.lights b, .tl b { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.lights b:nth-child(1), .tl b:nth-child(1) { background: #ff5f57; } .lights b:nth-child(2), .tl b:nth-child(2) { background: #febc2e; } .lights b:nth-child(3), .tl b:nth-child(3) { background: #28c840; }
+.side .sec { font-size: 10.5px; color: var(--dim); font-weight: 600; margin: 9px 8px 3px; }
+.side .it { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 6px; color: #b4bbd0; transition: background .35s, color .35s; white-space: nowrap; overflow: hidden; }
+.side .it .ic { width: 15px; text-align: center; font-size: 11px; color: var(--sky); flex: none; }
+.side .it.on { background: color-mix(in srgb, var(--accent) 24%, transparent); color: #fff; }
+.side .it.hid { display: none; }
+.side .it.pop { animation: pop .45s cubic-bezier(.3,1.5,.5,1) both; }
+.side .it .ej { margin-left: auto; color: var(--dim); }
+.main { display: grid; grid-template-rows: 40px minmax(0, 1fr) 26px; min-width: 0; }
+.toolbar { display: flex; align-items: center; gap: 6px; padding: 0 10px; border-bottom: 1px solid var(--line); min-width: 0; }
+.toolbar .nb { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: var(--muted); font-size: 13px; flex: none; }
+.addr { flex: 1; min-width: 0; height: 24px; border-radius: 6px; background: rgba(255,255,255,.06); border: 1px solid var(--line); display: flex; align-items: center; gap: 5px; padding: 0 9px; font-size: 11.5px; overflow: hidden; white-space: nowrap; }
+.addr span { color: #d5dbea; } .addr span:last-child { color: #fff; font-weight: 600; } .addr i { font-style: normal; color: var(--dim); }
+.toolbar .tb { flex: none; width: 24px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: var(--muted); font-size: 12px; transition: all .3s; }
+.toolbar .tb.on { background: color-mix(in srgb, var(--accent) 28%, transparent); color: #fff; }
+.statusbar { display: flex; align-items: center; gap: 10px; padding: 0 12px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; min-width: 0; }
+.statusbar .sbp { flex: 1; max-width: 140px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); overflow: hidden; opacity: 0; transition: opacity .3s; }
+.statusbar .sbp.on { opacity: 1; }
+.statusbar .sbp i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--sky), var(--gold)); }
+.statusbar #sbR { margin-left: auto; }
+.statusbar #sbL { overflow: hidden; text-overflow: ellipsis; }
+.content { position: relative; overflow: hidden; min-width: 0; }
+.scene { position: absolute; inset: 0; padding: 12px 14px; opacity: 0; transform: translateY(16px) scale(.985); transition: opacity .5s, transform .6s cubic-bezier(.2,.8,.2,1); pointer-events: none; display: flex; flex-direction: column; min-width: 0; }
+.scene.on { opacity: 1; transform: none; }
+.card { background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: 10px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.92); } }
+
+/* file icons */
+.fi { display: inline-block; flex: none; position: relative; border-radius: 2px; }
+.fi.folder { width: 15px; height: 11px; margin-top: 3px; background: linear-gradient(#ffd866, #f2b233); }
+.fi.folder::before { content: ""; position: absolute; left: 0; top: -3px; width: 7px; height: 4px; border-radius: 2px 2px 0 0; background: #d9901a; }
+.fi.doc, .fi.code, .fi.zip, .fi.xls, .fi.md { width: 11px; height: 14px; margin: 0 2px; }
+.fi.doc { background: #dfe4ef; } .fi.doc::after, .fi.md::after, .fi.code::after, .fi.xls::after { content: ""; position: absolute; left: 2px; right: 2px; top: 4px; height: 1px; box-shadow: 0 0 0 .5px rgba(0,0,0,.25), 0 3px 0 .5px rgba(0,0,0,.2), 0 6px 0 .5px rgba(0,0,0,.15); }
+.fi.md { background: #c9d6ff; }
+.fi.code { background: #7fb0ff; }
+.fi.xls { background: #48d18f; }
+.fi.zip { background: repeating-linear-gradient(180deg, #f2b233 0 2px, #a96d10 2px 4px); }
+.fi.img { width: 14px; height: 12px; margin-top: 1px; background: linear-gradient(160deg, #ffc58f, #ff7aa2 60%, #6a4fbf); }
+.fi.video { width: 14px; height: 11px; margin-top: 2px; background: linear-gradient(135deg, #a58bff, #6a4fe0); }
+.fi.drive { width: 15px; height: 10px; margin-top: 2px; background: linear-gradient(#c8cfde, #8c95ab); border-radius: 3px; }
+.ib { width: 42px; height: 40px; display: grid; place-items: center; flex: none; }
+.ib .fi { transform: scale(2.5); }
+
+/* rows */
+.rows { display: grid; gap: 1px; align-content: start; }
+.fr { display: flex; align-items: center; gap: 9px; padding: 4px 8px; border-radius: 6px; color: #d0d6e6; white-space: nowrap; transition: background .3s, opacity .4s, transform .5s, max-height .5s, padding .5s; max-height: 30px; min-width: 0; position: relative; }
+.fr .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fr .sz { margin-left: auto; color: var(--dim); font-variant-numeric: tabular-nums; font-size: 11.5px; padding-left: 8px; }
+.fr.sel { background: color-mix(in srgb, var(--blue) 55%, transparent); color: #fff; }
+.fr.sel .sz { color: #d6e2ff; }
+.fr.pop { animation: pop .45s cubic-bezier(.3,1.5,.5,1) both; }
+.fr.gone { opacity: 0; transform: translateX(40px); max-height: 0; padding-top: 0; padding-bottom: 0; }
+.fr.dimmed { opacity: .4; }
+.ph { font-size: 10.5px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px 6px; display: flex; justify-content: space-between; gap: 6px; white-space: nowrap; overflow: hidden; }
+
+/* dual pane */
+.panes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; min-height: 0; }
+.pane { border: 1px solid var(--line); border-radius: 9px; padding: 8px 4px; min-width: 0; overflow: hidden; transition: border-color .3s, background .3s; }
+.pane.on { border-color: color-mix(in srgb, var(--accent) 70%, transparent); background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.keyhint { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%) scale(.8); opacity: 0; transition: all .35s cubic-bezier(.3,1.5,.5,1); display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 10px; background: rgba(20,25,39,.95); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 12px 30px rgba(0,0,0,.5); font-size: 12px; white-space: nowrap; }
+.keyhint.on { opacity: 1; transform: translateX(-50%); }
+.keyhint kbd { color: var(--gold); }
+.toast { position: absolute; right: 14px; bottom: 12px; padding: 7px 12px; border-radius: 9px; font-size: 11.5px; background: rgba(20,25,39,.96); border: 1px solid rgba(63,214,138,.4); color: #c8f5dc; opacity: 0; transform: translateY(8px); transition: all .4s; white-space: nowrap; }
+.toast.on { opacity: 1; transform: none; }
+
+/* views */
+.seg { display: inline-flex; align-self: flex-start; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 10px; max-width: 100%; }
+.seg span { padding: 3px 10px; font-size: 11px; color: var(--muted); transition: all .3s; white-space: nowrap; }
+.seg span.on { background: color-mix(in srgb, var(--accent) 30%, transparent); color: #fff; }
+.vbox { flex: 1; min-height: 0; position: relative; transition: opacity .25s; }
+.vbox.fade { opacity: 0; }
+.dt { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, .8fr); align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; color: #d0d6e6; }
+.dt > span { overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dt > span:not(:first-child) { color: var(--dim); font-size: 11.5px; }
+.dt > span:last-child { justify-content: flex-end; }
+.dt.hd { color: var(--dim); font-size: 10.5px; border-bottom: 1px solid var(--line); border-radius: 0; margin-bottom: 3px; }
+.dt.hd > span:first-child { color: var(--dim); }
+.dt.sel { background: color-mix(in srgb, var(--blue) 55%, transparent); color: #fff; }
+.dt.sel > span { color: #fff; }
+.lv { display: grid; grid-auto-flow: column; grid-template-rows: repeat(5, auto); gap: 2px 12px; align-content: start; }
+.lv .fr { padding: 3px 6px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.tile { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 8px; min-width: 0; }
+.tile b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tile small { display: block; color: var(--dim); font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile > div { min-width: 0; }
+.icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px 6px; }
+.icn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 2px; border-radius: 8px; font-size: 11px; text-align: center; min-width: 0; }
+.icn .ib { width: 52px; height: 46px; } .icn .ib .fi { transform: scale(3); }
+.icn span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tile.sel, .icn.sel { background: color-mix(in srgb, var(--blue) 45%, transparent); }
+.cols { display: grid; grid-template-columns: 1fr 1fr 1fr; height: 100%; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cols > div { border-right: 1px solid var(--line); padding: 4px; min-width: 0; overflow: hidden; }
+.cols > div:last-child { border-right: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; color: var(--muted); font-size: 11px; }
+.cols .fr { padding: 3px 6px; }
+.cols .fr .sz { font-size: 13px; }
+
+/* palette */
+.under { position: absolute; inset: 12px 14px; transition: filter .4s, opacity .4s; }
+.under.blur { filter: blur(2px); opacity: .35; }
+.pal { position: absolute; left: 50%; top: 14px; width: min(88%, 430px); transform: translateX(-50%) translateY(-12px) scale(.96); opacity: 0; transition: all .35s cubic-bezier(.3,1.3,.5,1); background: rgba(24,29,45,.97); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; box-shadow: 0 30px 70px rgba(0,0,0,.6); overflow: hidden; }
+.pal.on { opacity: 1; transform: translateX(-50%); }
+.pal .q { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.pal .q .ph2 { color: var(--dim); }
+.caret { width: 2px; height: 16px; background: var(--sky); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.pal .res { padding: 5px; display: grid; gap: 1px; }
+.pr { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 7px; color: #d0d6e6; white-space: nowrap; min-width: 0; }
+.pr .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.pr .nm b { color: var(--gold); font-weight: 700; }
+.pr .k { margin-left: auto; color: var(--dim); font-size: 11px; font-family: "JetBrains Mono"; padding-left: 8px; }
+.pr .cat { width: 15px; text-align: center; color: var(--sky); flex: none; }
+.pr.sel { background: color-mix(in srgb, var(--blue) 55%, transparent); color: #fff; }
+.pr.sel .k { color: #cfe0ff; }
+
+/* compare */
+.cbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; font-size: 11px; color: var(--muted); position: relative; }
+.cbar .chip { background: rgba(255,255,255,.06); color: #cfd5e6; }
+.cbar .sync { margin-left: auto; padding: 3px 10px; border-radius: 7px; background: color-mix(in srgb, var(--accent) 25%, transparent); color: #fff; font-weight: 600; }
+.menu { position: absolute; right: 0; top: 28px; z-index: 4; width: min(100%, 290px); padding: 5px; border-radius: 10px; background: rgba(26,31,48,.98); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 20px 50px rgba(0,0,0,.55); transform-origin: top right; transform: scale(.9); opacity: 0; transition: all .3s cubic-bezier(.3,1.4,.5,1); }
+.menu.on { transform: none; opacity: 1; }
+.menu div { padding: 5px 9px; border-radius: 6px; color: #d0d6e6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu div.hl { background: var(--blue); color: #fff; }
+.mk { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; margin-left: auto; white-space: nowrap; }
+.mk.newer { background: rgba(110,162,255,.2); color: #a9c6ff; }
+.mk.only { background: rgba(63,214,138,.18); color: #7fe8b2; }
+.mk.older { background: rgba(255,255,255,.06); color: var(--dim); }
+.fr .mk + .sz { margin-left: 6px; }
+.fr.same { opacity: .45; }
+
+/* treemap */
+.tm-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; white-space: nowrap; }
+.tm-head b { font-family: "Space Grotesk"; font-size: 15px; overflow: hidden; text-overflow: ellipsis; }
+.tm-head span { color: var(--muted); font-size: 11px; }
+.tm { position: relative; flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; }
+.tm i { position: absolute; border: 1.5px solid #0e121c; border-radius: 5px; font-style: normal; font-size: 10.5px; color: rgba(255,255,255,.92); padding: 4px 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; transform: scale(.6); opacity: 0; transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .5s, box-shadow .3s, filter .3s; text-shadow: 0 1px 2px rgba(0,0,0,.4); }
+.tm i small { display: block; opacity: .8; font-size: 10px; }
+.scene.on .tm i { transform: none; opacity: 1; }
+.tm i.hot { box-shadow: inset 0 0 0 2px #fff; filter: brightness(1.15); z-index: 2; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 10.5px; color: var(--muted); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 9px; height: 9px; border-radius: 3px; }
+.dupe { position: absolute; right: 22px; bottom: 44px; padding: 10px 12px; width: min(62%, 250px); background: rgba(20,25,39,.97); border: 1px solid rgba(255,255,255,.14); border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.55); font-size: 11.5px; opacity: 0; transform: translateY(12px); transition: all .45s cubic-bezier(.3,1.4,.5,1); }
+.dupe.on { opacity: 1; transform: none; }
+.dupe b { font-size: 12.5px; }
+.dupe .fr { padding: 2px 0; font-size: 11px; }
+
+/* queue */
+.jobs { display: grid; gap: 7px; }
+.job { padding: 9px 11px; display: grid; gap: 5px; }
+.job .top { display: flex; align-items: center; gap: 8px; white-space: nowrap; min-width: 0; }
+.job .top b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.job .ctl { margin-left: auto; display: flex; gap: 5px; flex: none; }
+.job .ctl span { font-size: 10.5px; padding: 1px 8px; border-radius: 6px; background: rgba(255,255,255,.08); color: #cfd5e6; transition: background .2s; }
+.job .ctl span.press { background: var(--blue); color: #fff; }
+.job .bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,.07); overflow: hidden; }
+.job .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--sky), var(--gold)); transition: width .5s linear; }
+.job.paused .bar i { background: var(--dim); }
+.job .info { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sheet { position: absolute; left: 50%; top: 10px; width: min(92%, 420px); transform: translate(-50%, -30px); opacity: 0; transition: all .45s cubic-bezier(.3,1.3,.5,1); padding: 13px; border-radius: 12px; background: rgba(26,31,48,.985); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 70px rgba(0,0,0,.65); z-index: 5; }
+.sheet.on { opacity: 1; transform: translate(-50%, 0); }
+.sheet h5 { font-family: "Space Grotesk"; font-size: 14px; margin-bottom: 3px; }
+.sheet .sub { color: var(--muted); font-size: 11px; margin-bottom: 9px; }
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 9px; }
+.vs > div { padding: 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 11px; min-width: 0; }
+.vs > div.nw { border-color: rgba(110,162,255,.55); background: rgba(110,162,255,.08); }
+.vs b { display: flex; gap: 7px; align-items: center; font-size: 11.5px; white-space: nowrap; overflow: hidden; }
+.vs small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.btns span { padding: 3px 10px; border-radius: 7px; background: rgba(255,255,255,.08); font-size: 11px; white-space: nowrap; transition: all .2s; }
+.btns span.pri { background: var(--blue); color: #fff; }
+.btns span.press { transform: scale(.94); filter: brightness(1.3); }
+.btns label { margin-right: auto; font-size: 10.5px; color: var(--muted); display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.btns label i { width: 11px; height: 11px; border-radius: 3px; background: var(--blue); display: grid; place-items: center; font-size: 8px; font-style: normal; color: #fff; }
+
+/* archive */
+.banner { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: rgba(242,178,51,.12); border: 1px solid rgba(242,178,51,.35); color: #ffe3a1; font-size: 11.5px; margin-bottom: 8px; opacity: 0; max-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; transition: all .4s; white-space: nowrap; }
+.banner.on { opacity: 1; max-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+.banner span:first-of-type { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.banner .b2 { margin-left: auto; display: flex; gap: 5px; flex: none; }
+.banner .b2 span { padding: 1px 8px; border-radius: 6px; background: rgba(255,255,255,.1); color: #fff; }
+.fmts { display: flex; gap: 6px; margin-top: auto; padding-top: 8px; flex-wrap: wrap; }
+.fmts .chip { background: rgba(242,178,51,.14); color: #ffd88a; font-family: "JetBrains Mono"; }
+.fr.dbl { animation: dbl .5s 2; }
+@keyframes dbl { 50% { background: color-mix(in srgb, var(--blue) 85%, transparent); } }
+
+/* rename */
+.dlg { padding: 12px; border-radius: 12px; background: rgba(26,31,48,.9); border: 1px solid rgba(255,255,255,.12); display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.dlg h5 { font-family: "Space Grotesk"; font-size: 14px; }
+.fld { display: flex; gap: 8px; align-items: center; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.fld .in { flex: 1; min-width: 0; display: flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 6px; background: rgba(0,0,0,.3); border: 1px solid rgba(110,162,255,.5); color: var(--text); font-size: 12px; overflow: hidden; }
+.fld .in.sm { flex: none; width: 54px; border-color: var(--line); }
+.pv { display: grid; gap: 2px; font-size: 11.5px; overflow: hidden; }
+.pv div { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); gap: 6px; align-items: center; padding: 3px 6px; border-radius: 5px; background: rgba(255,255,255,.03); white-space: nowrap; }
+.pv div span { overflow: hidden; text-overflow: ellipsis; }
+.pv div span:first-child { color: var(--dim); }
+.pv div i { color: var(--sky); font-style: normal; text-align: center; }
+.pv div span:last-child { color: #fff; }
+
+/* terminal */
+.gb { width: 15px; height: 15px; border-radius: 4px; font-size: 9.5px; font-weight: 700; display: grid; place-items: center; flex: none; font-family: "JetBrains Mono"; }
+.gb.M { background: rgba(242,178,51,.22); color: var(--gold); }
+.gb.A { background: rgba(63,214,138,.2); color: #7fe8b2; }
+.gb.U { background: rgba(155,133,255,.22); color: #c4b7ff; }
+.gb.I { background: transparent; }
+.ic-cl { color: var(--sky); font-size: 11px; margin-left: 6px; }
+.term { margin-top: auto; height: 46%; border-radius: 9px; background: #05070d; border: 1px solid var(--line); font-family: "JetBrains Mono"; font-size: 11px; color: #c9d0e2; padding: 8px 10px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+.term .th { display: flex; justify-content: space-between; color: var(--dim); font-family: Inter; font-size: 10px; border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: auto; }
+.term div.l { white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+.term .p { color: #7fe8b2; } .term .br { color: var(--gold); } .term .m { color: var(--gold); } .term .a { color: #7fe8b2; } .term .u { color: #c4b7ff; }
+
+/* server */
+.srv-rows { flex: 1; }
+.conn { width: min(94%, 400px); }
+.list2 { border: 1px solid var(--line); border-radius: 8px; padding: 3px; margin-bottom: 8px; }
+.list2 .t { font-size: 10px; color: var(--dim); padding: 3px 7px; font-weight: 600; }
+.list2 div.r { display: flex; align-items: center; gap: 8px; padding: 4px 7px; border-radius: 6px; font-size: 11.5px; font-family: "JetBrains Mono"; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #d0d6e6; }
+.list2 div.r.hl { background: color-mix(in srgb, var(--blue) 50%, transparent); }
+.note2 { font-size: 10.5px; color: var(--muted); margin-bottom: 8px; }
+
+/* ---------- sections after story ---------- */
+section.pad { padding: 120px clamp(16px, 4vw, 56px); max-width: 1200px; margin: 0 auto; }
+.center { text-align: center; }
+.big-h { font-size: clamp(30px, 5vw, 54px); line-height: 1.1; }
+.sub-h { color: var(--muted); max-width: 620px; margin: 16px auto 0; font-size: 17px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; margin-top: 44px; text-align: left; }
+.feat { padding: 22px; border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)); border: 1px solid var(--line); transition: transform .3s, border-color .3s; }
+.feat:hover { transform: translateY(-4px); border-color: rgba(255,216,102,.35); }
+.feat .e { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; background: linear-gradient(135deg, rgba(110,162,255,.22), rgba(242,178,51,.14)); border: 1px solid var(--line); }
+.feat h3 { font-size: 18px; margin: 12px 0 6px; }
+.feat p { color: var(--muted); font-size: 14.5px; }
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s, transform .8s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* finder note */
+.finder { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; margin-top: 40px; text-align: left; }
+.fbox { padding: 24px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.025); }
+.fbox h3 { font-size: 19px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.fbox h3 i { font-style: normal; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-size: 14px; flex: none; }
+.fbox.yes h3 i { background: rgba(63,214,138,.16); color: #7fe8b2; }
+.fbox.no h3 i { background: rgba(255,255,255,.08); color: var(--muted); }
+.fbox ul { list-style: none; display: grid; gap: 9px; }
+.fbox li { color: #cbd2e4; font-size: 15px; display: flex; gap: 10px; }
+.fbox.yes li::before { content: "✓"; color: var(--green); flex: none; }
+.fbox.no li::before { content: "–"; color: var(--dim); flex: none; }
+.fbox code { font-size: .88em; color: var(--gold); }
+.shell { margin-top: 16px; border-radius: 14px; background: #05070d; border: 1px solid var(--line); text-align: left; overflow: hidden; }
+.shell .bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+.shell .bar .tl { display: flex; gap: 6px; margin-right: 6px; }
+.shell .bar button { margin-left: auto; background: rgba(255,255,255,.07); border: 1px solid var(--line); color: var(--text); border-radius: 7px; padding: 3px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+.shell .bar button:hover { background: rgba(255,255,255,.12); }
+.shell pre { padding: 16px 18px; font-family: "JetBrains Mono"; font-size: 13.5px; line-height: 1.85; color: #dfe5f3; overflow-x: auto; white-space: pre; }
+.shell pre .c { color: var(--dim); }
+.shell pre .p { color: #7fe8b2; user-select: none; }
+.fine { color: var(--muted); font-size: 14px; margin-top: 14px; text-align: left; }
+
+/* final */
+.final { text-align: center; padding: 130px 20px 110px; position: relative; overflow: hidden; }
+.final::before { content: ""; position: absolute; left: 50%; top: 45%; width: 900px; height: 520px; transform: translate(-50%, -50%); background: radial-gradient(ellipse, rgba(47,111,214,.32), transparent 65%); pointer-events: none; }
+.final > * { position: relative; }
+.final .icon { width: 116px; margin-bottom: 22px; filter: drop-shadow(0 18px 40px rgba(47,111,214,.55)); }
+.final p.t { color: var(--muted); margin: 16px auto 30px; max-width: 540px; }
+.final .meta { color: var(--muted); font-size: 13px; margin-top: 16px; }
+.install { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; max-width: 880px; margin: 54px auto 0; text-align: left; }
+.install > div { padding: 18px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.03); }
+.install .n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-family: "Space Grotesk"; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--sky), var(--blue)); margin-bottom: 10px; }
+.install b { display: block; margin-bottom: 4px; }
+.install p { color: var(--muted); font-size: 14px; }
+footer { border-top: 1px solid var(--line); padding: 30px 20px 36px; text-align: center; color: var(--muted); font-size: 13.5px; display: grid; gap: 8px; }
+footer a { color: var(--sky); text-decoration: underline; text-underline-offset: 3px; }
+footer .small { color: var(--dim); font-size: 12.5px; }
+
+/* ---------- mobile ---------- */
+@media (max-width: 860px) {
+  .story { grid-template-columns: minmax(0, 1fr); }
+  .stage { order: -1; height: auto; top: 58px; padding: 10px 0; z-index: 5; background: linear-gradient(180deg, var(--bg) 85%, transparent); }
+  .window { aspect-ratio: 4 / 3.3; grid-template-columns: minmax(0, 1fr); max-height: 52vh; font-size: 11.5px; }
+  .side { display: none; }
+  .step { min-height: 72vh; padding: 4vh 0 6vh; justify-content: flex-start; }
+  .progress { display: none; }
+  .scene { padding: 9px 10px; }
+  nav .ghost { display: none; }
+  .dt { grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr) minmax(0, .8fr); }
+  .dt > span:nth-child(2) { display: none; }
+  .floaters { display: none; }
+}
+@media (max-width: 520px) {
+  .window { font-size: 10.5px; aspect-ratio: 4 / 3.6; }
+  .main { grid-template-rows: 34px minmax(0, 1fr) 22px; }
+  .toolbar .nb:nth-child(3), .toolbar .tb { display: none; }
+  .fr { gap: 6px; padding: 3px 5px; }
+  .fr .sz { font-size: 10px; }
+  .pane { padding: 6px 2px; }
+  .panes { gap: 5px; }
+  .seg span { padding: 3px 6px; font-size: 10px; }
+  .tiles { grid-template-columns: 1fr 1fr; }
+  .tile .ib { width: 30px; } .tile .ib .fi { transform: scale(1.8); }
+  .icons { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .icn .ib { width: 36px; height: 34px; } .icn .ib .fi { transform: scale(2.1); }
+  .mk { font-size: 0; padding: 0; width: 7px; height: 7px; flex: none; }
+  .mk.newer { background: var(--sky); } .mk.only { background: var(--green); } .mk.older { background: var(--dim); }
+  .dupe { right: 10px; bottom: 34px; }
+  .toast { left: 10px; right: 10px; bottom: 8px; white-space: normal; text-align: center; }
+  .statusbar .sbp { display: none; }
+  .vs small { font-size: 9.5px; }
+  .lang button { padding: 5px 9px; }
+  nav { gap: 8px; }
+  nav .btn.small { padding: 8px 12px; }
+}
+@media (max-width: 380px) {
+  nav .brand span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01s !important; animation-iteration-count: 1 !important; transition-duration: .01s !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="brand" href="#top"><img src="assets/icon.png" alt=""><span>Gezer</span></a>
+  <div class="spacer"></div>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-label="English">EN</button><button type="button" data-lang="tr" aria-label="Türkçe">TR</button></div>
+  <a class="ghost" href="https://github.com/ozgurozcan-afl/gezer-web/releases" data-i18n="releases">Releases</a>
+  <a class="btn small" href="https://github.com/ozgurozcan-afl/gezer-web/releases/latest/download/Gezer.dmg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-i18n="download">Download</span>
+  </a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="gridbg"></div>
+  <div class="floaters" aria-hidden="true">
+    <span style="left:8%;top:24%"><i class="fi folder"></i>Projects</span>
+    <span style="left:12%;top:68%"><kbd>F5</kbd> <em data-i18n="fl_copy" style="font-style:normal">Copy</em></span>
+    <span style="right:9%;top:22%"><kbd>⌘K</kbd> <em data-i18n="fl_palette" style="font-style:normal">Command palette</em></span>
+    <span style="right:7%;top:62%"><i class="fi zip"></i>photos.zip</span>
+    <span style="left:22%;top:86%"><i class="gb M">M</i>index.html</span>
+  </div>
+  <div class="hero-inner">
+    <div class="logo-orb"><div class="ring"></div><div class="ring"></div><div class="ring"></div><img src="assets/icon.png" alt="Gezer"></div>
+    <h1><span class="grad" data-i18n="heroTitle">Your Mac's files, the Explorer way.</span></h1>
+    <p class="lead" data-i18n="heroLead">Gezer is a fast, native file manager with dual panes, tabs, a ⌘K command palette, folder compare and sync, a disk usage map and a built‑in terminal — everything you miss from Windows Explorer, made for macOS.</p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/ozgurozcan-afl/gezer-web/releases/latest/download/Gezer.dmg">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.2-1.7-3-1.9-3.6-1.9-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.2 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-4.3zM14 5.3c.7-.8 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+        <span data-i18n="downloadMac">Download for Mac</span>
+      </a>
+      <a class="ghost" href="#story" data-i18n="seeHow">See what it does ↓</a>
+    </div>
+    <div class="meta" data-i18n="meta">Free · Version 0.1.1 · macOS 14+ · Developer ID signed & notarized by Apple</div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true"><span></span><em data-i18n="scroll" style="font-style:normal">Scroll</em></div>
+</header>
+
+<div class="story" id="story">
+  <div class="steps" id="steps"></div>
+  <div class="stage">
+    <div class="window" id="win" aria-hidden="true">
+      <aside class="side"><div class="lights"><b></b><b></b><b></b></div><div id="side"></div></aside>
+      <div class="main">
+        <div class="toolbar">
+          <span class="nb">‹</span><span class="nb">›</span><span class="nb">↑</span>
+          <div class="addr" id="addr"></div>
+          <span class="tb" id="tbDual" title="">▥</span><span class="tb" id="tbTerm">›_</span>
+        </div>
+        <div class="content" id="content">
+
+          <!-- dual pane -->
+          <div class="scene" data-scene="dual">
+            <div class="panes">
+              <div class="pane on" id="dL"><div class="ph"><span>Projects</span><span id="dLn"></span></div><div class="rows"></div></div>
+              <div class="pane" id="dR"><div class="ph"><span>Backup</span><span id="dRn"></span></div><div class="rows"></div></div>
+            </div>
+            <div class="keyhint" id="dKey"></div>
+          </div>
+
+          <!-- views -->
+          <div class="scene" data-scene="views">
+            <div class="seg" id="vSeg"></div>
+            <div class="vbox" id="vBox"></div>
+          </div>
+
+          <!-- palette -->
+          <div class="scene" data-scene="palette">
+            <div class="under" id="pUnder"><div class="rows" id="pRows"></div></div>
+            <div class="pal" id="pal"><div class="q"><span style="color:var(--dim)">⌕</span><span id="pQ"></span><span class="caret"></span><span class="ph2" id="pPh"></span></div><div class="res" id="pRes"></div></div>
+          </div>
+
+          <!-- compare -->
+          <div class="scene" data-scene="compare">
+            <div class="cbar"><span data-i18n="m_cmp_title" style="font-weight:600;color:var(--text)">Compare</span><span class="chip" id="cSum"></span><span class="sync" data-i18n="m_sync">Sync ▾</span>
+              <div class="menu" id="cMenu"><div class="hl" data-i18n="m_sync1">Copy Newer and Missing → Right</div><div data-i18n="m_sync2">← Copy Newer and Missing to Left</div><div data-i18n="m_sync3">Sync Both Ways</div></div></div>
+            <div class="panes">
+              <div class="pane on" id="cL"><div class="ph"><span>website</span><span>~/Projects</span></div><div class="rows"></div></div>
+              <div class="pane" id="cR"><div class="ph"><span>website</span><span>/Volumes/Media</span></div><div class="rows"></div></div>
+            </div>
+            <div class="toast" id="cToast"></div>
+          </div>
+
+          <!-- usage -->
+          <div class="scene" data-scene="usage">
+            <div class="tm-head"><b data-i18n="m_usage">Disk Usage — ~</b><span id="uTot"></span></div>
+            <div class="tm" id="tm"></div>
+            <div class="legend" id="uLeg"></div>
+            <div class="dupe" id="dupe"></div>
+          </div>
+
+          <!-- queue -->
+          <div class="scene" data-scene="queue">
+            <div class="tm-head"><b data-i18n="m_ops">Operations</b><span data-i18n="m_ops_sub">Big jobs on the same volume run one at a time</span></div>
+            <div class="jobs" id="jobs"></div>
+            <div class="sheet" id="qSheet">
+              <h5 data-i18n="m_conf_t">Replace or Skip Files</h5>
+              <div class="sub" data-i18n="m_conf_s">“report.pdf” already exists in “Backup”.</div>
+              <div class="vs">
+                <div class="nw"><b><i class="fi doc"></i>report.pdf</b><small data-i18n="m_conf_a">3.1 MB · Today 14:02</small><small style="color:#a9c6ff" data-i18n="m_conf_new">Newer · incoming</small></div>
+                <div><b><i class="fi doc"></i>report.pdf</b><small data-i18n="m_conf_b">2.9 MB · 3 Nov</small><small data-i18n="m_conf_old">Existing</small></div>
+              </div>
+              <div class="btns"><label><i>✓</i><span data-i18n="m_conf_all">Do this for all 4 conflicts</span></label><span data-i18n="m_skip">Skip</span><span id="qKeep" data-i18n="m_keep">Keep Both</span><span class="pri" data-i18n="m_replace">Replace</span></div>
+            </div>
+            <div class="toast" id="qToast"></div>
+          </div>
+
+          <!-- archive -->
+          <div class="scene" data-scene="archive">
+            <div class="banner" id="aBan"><span>⧉</span><span data-i18n="m_arc_in">Inside photos.zip (read-only)</span><span class="b2"><span data-i18n="m_arc_ext">Extract All…</span><span data-i18n="m_close">Close</span></span></div>
+            <div class="rows" id="aRows"></div>
+            <div class="fmts"><span class="chip">.zip</span><span class="chip">.7z</span><span class="chip">.rar</span><span class="chip">.tar</span></div>
+          </div>
+
+          <!-- rename -->
+          <div class="scene" data-scene="rename">
+            <div class="dlg">
+              <h5 data-i18n="m_ren_t">Rename 5 Items</h5>
+              <div class="seg" style="margin:0"><span data-i18n="m_ren_rep">Replace text</span><span data-i18n="m_ren_add">Add text</span><span class="on" data-i18n="m_ren_fmt">Format</span></div>
+              <div class="fld"><span data-i18n="m_ren_name">Name</span><div class="in" id="rIn"></div><span data-i18n="m_ren_start">Start</span><div class="in sm">001</div></div>
+              <div class="pv" id="rPv"></div>
+              <div class="btns" style="margin-top:auto"><label style="color:var(--dim)" data-i18n="m_ren_note">All or nothing · one Undo step</label><span data-i18n="m_cancel">Cancel</span><span class="pri" id="rGo" data-i18n="m_rename">Rename</span></div>
+            </div>
+          </div>
+
+          <!-- terminal -->
+          <div class="scene" data-scene="terminal">
+            <div class="rows" id="gRows"></div>
+            <div class="term" id="term"></div>
+          </div>
+
+          <!-- server -->
+          <div class="scene" data-scene="server">
+            <div class="rows srv-rows" id="sRows"></div>
+            <div class="sheet conn" id="sSheet">
+              <h5 data-i18n="m_srv_t">Connect to Server</h5>
+              <div class="fld" style="margin:8px 0"><div class="in" id="sIn"></div></div>
+              <div class="list2"><div class="t" data-i18n="m_srv_fav">Favorite Servers</div><div class="r hl">smb://nas.local/Media</div><div class="r">sftp://me@build.box/home</div></div>
+              <div class="list2"><div class="t" data-i18n="m_srv_rec">Recent Servers</div><div class="r">afp://studio.local/Archive</div><div class="r">\\fileserver\share</div></div>
+              <div class="note2" data-i18n="m_srv_note">Passwords go to macOS's own sign‑in sheet — Gezer never sees them.</div>
+              <div class="btns"><span data-i18n="m_cancel">Cancel</span><span class="pri" id="sGo" data-i18n="m_connect">Connect</span></div>
+            </div>
+          </div>
+
+        </div>
+        <div class="statusbar"><span id="sbL"></span><span class="sbp" id="sbP"><i id="sbBar"></i></span><span id="sbR"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="progress" id="progress" aria-label="Sections"></div>
+
+<section class="pad center" id="more">
+  <h2 class="big-h reveal" data-i18n="moreTitle">And the details that make it feel like home.</h2>
+  <p class="sub-h reveal" data-i18n="moreSub">Small things you'd notice on day one — all native SwiftUI, all keyboard‑friendly.</p>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section class="pad center" id="finder">
+  <h2 class="big-h reveal" data-i18n="finderTitle">Gezer &amp; Finder, honestly.</h2>
+  <p class="sub-h reveal" data-i18n="finderSub">macOS doesn't let any app replace Finder — it always runs, and parts of the system only talk to it. But Gezer can take over every folder that opens through Launch Services.</p>
+  <div class="finder">
+    <div class="fbox yes reveal"><h3><i>✓</i><span data-i18n="fYesT">Opens in Gezer</span></h3><ul id="fYes"></ul></div>
+    <div class="fbox no reveal"><h3><i>–</i><span data-i18n="fNoT">Stays with Finder</span></h3><ul id="fNo"></ul></div>
+  </div>
+  <div class="shell reveal">
+    <div class="bar"><span class="tl"><b></b><b></b><b></b></span><span data-i18n="shellT">Make Gezer the folder handler</span><button type="button" id="copyBtn" data-i18n="copy">Copy</button></div>
+<pre id="shellPre"><span class="p">$ </span>brew install duti
+<span class="p">$ </span>duti -s com.gezer.app public.folder viewer   <span class="c" data-i18n="c1"># folders open in Gezer</span>
+<span class="p">$ </span>duti -s com.apple.finder public.folder viewer  <span class="c" data-i18n="c2"># undo: give them back to Finder</span></pre>
+  </div>
+  <p class="fine reveal" data-i18n-html="finderFine">Or skip all that: keep Gezer in the Dock and drop folders on it, use Finder's <b>Open With › Gezer</b>, or run <code>open -a Gezer ~/Downloads</code>.</p>
+</section>
+
+<section class="final" id="get">
+  <img class="icon reveal" src="assets/icon.png" alt="">
+  <h2 class="big-h reveal"><span class="grad" data-i18n="finalTitle">Start exploring.</span></h2>
+  <p class="t reveal" data-i18n="finalText">Free, no account, no tracking. Your files stay where they are — Gezer just helps you get around them faster.</p>
+  <a class="btn reveal" href="https://github.com/ozgurozcan-afl/gezer-web/releases/latest/download/Gezer.dmg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-i18n="downloadDmg">Download Gezer.dmg</span></a>
+  <div class="meta reveal" data-i18n="finalMeta">Version 0.1.1 · 5.5 MB · macOS 14 Sonoma or later</div>
+  <div class="install">
+    <div class="reveal"><div class="n">1</div><b data-i18n="i1t">Download</b><p data-i18n="i1p">Get Gezer.dmg from the button above or the releases page.</p></div>
+    <div class="reveal"><div class="n">2</div><b data-i18n="i2t">Drag to Applications</b><p data-i18n="i2p">Open the DMG and drag Gezer onto the Applications folder.</p></div>
+    <div class="reveal"><div class="n">3</div><b data-i18n="i3t">Open and go</b><p data-i18n="i3p">Signed with Developer ID and notarized by Apple, so it opens without warnings.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div data-i18n="footer1">Gezer 0.1.1 · macOS 14+ · Free · Türkçe & English</div>
+  <div><a href="https://github.com/ozgurozcan-afl/gezer-web/releases" data-i18n="allReleases">All releases &amp; release notes</a></div>
+  <div class="small" data-i18n="footer2">Install: open the DMG and drag Gezer to Applications. Not affiliated with Apple or Microsoft.</div>
+</footer>
+
+<script>
+// @data-start
+const T = {
+  en: {
+    releases: "Releases", download: "Download", downloadMac: "Download for Mac", downloadDmg: "Download Gezer.dmg", seeHow: "See what it does ↓", scroll: "Scroll",
+    fl_copy: "Copy", fl_palette: "Command palette",
+    docTitle: "Gezer — Explorer-style File Manager for Mac",
+    heroTitle: "Your Mac's files, the Explorer way.",
+    heroLead: "Gezer is a fast, native file manager with dual panes, tabs, a ⌘K command palette, folder compare and sync, a disk usage map and a built‑in terminal — everything you miss from Windows Explorer, made for macOS.",
+    meta: "Free · Version 0.1.1 · macOS 14+ · Developer ID signed & notarized by Apple",
+    moreTitle: "And the details that make it feel like home.",
+    moreSub: "Small things you'd notice on day one — all native SwiftUI, all keyboard‑friendly.",
+    finderTitle: "Gezer & Finder, honestly.",
+    finderSub: "macOS doesn't let any app replace Finder — it always runs, and parts of the system only talk to it. But Gezer can take over every folder that opens through Launch Services.",
+    fYesT: "Opens in Gezer", fNoT: "Stays with Finder",
+    fYes: ["<code>open ~/Downloads</code> in Terminal", "Apps that open a folder, links to folders", "Folders dropped on Gezer's Dock icon", "Finder's right‑click › Open With › Gezer"],
+    fNo: ["The desktop, Trash window and Dock stacks", "“Show in Finder” / “Reveal in Finder” from other apps", "Double‑clicking a folder inside Finder itself"],
+    shellT: "Make Gezer the folder handler", copy: "Copy", copied: "Copied ✓",
+    c1: "# folders open in Gezer", c2: "# undo: give them back to Finder",
+    finderFine: "Or skip all that: keep Gezer in the Dock and drop folders on it, use Finder's <b>Open With › Gezer</b>, or run <code>open -a Gezer ~/Downloads</code>.",
+    finalTitle: "Start exploring.",
+    finalText: "Free, no account, no tracking. Your files stay where they are — Gezer just helps you get around them faster.",
+    finalMeta: "Version 0.1.1 · 5.5 MB · macOS 14 Sonoma or later",
+    i1t: "Download", i1p: "Get Gezer.dmg from the button above or the releases page.",
+    i2t: "Drag to Applications", i2p: "Open the DMG and drag Gezer onto the Applications folder.",
+    i3t: "Open and go", i3p: "Signed with Developer ID and notarized by Apple, so it opens without warnings.",
+    footer1: "Gezer 0.1.1 · macOS 14+ · Free · Türkçe & English",
+    allReleases: "All releases & release notes",
+    footer2: "Install: open the DMG and drag Gezer to Applications. Not affiliated with Apple or Microsoft.",
+    // mock window
+    m_cmp_title: "Compare", m_sync: "Sync ▾", m_sync1: "Copy Newer and Missing → Right", m_sync2: "← Copy Newer and Missing to Left", m_sync3: "Sync Both Ways",
+    m_usage: "Disk Usage — ~", m_ops: "Operations", m_ops_sub: "Big jobs on the same volume run one at a time",
+    m_conf_t: "Replace or Skip Files", m_conf_s: "“report.pdf” already exists in “Backup”.", m_conf_a: "3.1 MB · Today 14:02", m_conf_b: "2.9 MB · 3 Nov", m_conf_new: "Newer · incoming", m_conf_old: "Existing",
+    m_conf_all: "Do this for all 4 conflicts", m_skip: "Skip", m_keep: "Keep Both", m_replace: "Replace",
+    m_arc_in: "Inside photos.zip (read-only)", m_arc_ext: "Extract All…", m_close: "Close",
+    m_ren_t: "Rename 5 Items", m_ren_rep: "Replace text", m_ren_add: "Add text", m_ren_fmt: "Format", m_ren_name: "Name", m_ren_start: "Start", m_ren_note: "All or nothing · one Undo step", m_cancel: "Cancel", m_rename: "Rename", m_ren_word: "Holiday",
+    m_srv_t: "Connect to Server", m_srv_fav: "Favorite Servers", m_srv_rec: "Recent Servers", m_srv_note: "Passwords go to macOS's own sign‑in sheet — Gezer never sees them.", m_connect: "Connect",
+    items: n => `${n} items`, selected: (n, m) => `${n} items, ${m} selected`, free: "212 GB available",
+    copying: (n, s) => `Copying ${n} items · ${s}`, copied: n => `✓ ${n} items copied · ⌘Z to undo`, moved: "✓ Moved to Backup · ⌘Z to undo",
+    keyCopy: "Copy to other pane", keyMove: "Move to other pane",
+    views: ["Details", "List", "Tiles", "Icons", "Columns"], cols: ["Name", "Date modified", "Kind", "Size"],
+    palPh: "Type a command or folder…", palQuery: "cmpf", palRan: "Compare Folders",
+    cmpSum: (s, n, o) => `${s} same · ${n} newer · ${o} only on one side`, cmpNewer: "newer", cmpOnly: "only here", cmpOlder: "older", synced: "✓ Synced 3 items · one ⌘Z undoes it",
+    uTot: "214 GB · 38,912 items", dupeT: "Find Duplicates", dupeS: "3 groups · 1.4 GB reclaimable", keepNewest: "Keep newest",
+    legend: ["Video", "Images", "Code", "Archives", "Other"],
+    jobs: [["Copying 214 items → Backup", "128 MB/s · 42 s left"], ["Moving “Footage” → Media", "Waiting · same volume"], ["Extracting photos.zip", "Paused"]],
+    pause: "Pause", resume: "Resume", cancel: "Cancel", running: "Running", qDone: "✓ Copied · “report 2.pdf” kept · ⌘Z Undo Copy",
+    arcOpen: "Opened as a folder · read-only",
+    termHead: "Terminal · cd follows navigation", branch: "main ↑1 ●",
+    mounted: "Mounted “Media” · 2.1 TB available",
+    kinds: { folder: "Folder", doc: "PDF document", img: "PNG image", sheet: "Spreadsheet", zip: "ZIP archive", video: "Movie", code: "Source code", md: "Markdown" },
+    today: "Today", yest: "Yesterday",
+  },
+  tr: {
+    releases: "Sürümler", download: "İndir", downloadMac: "Mac için indir", downloadDmg: "Gezer.dmg'yi indir", seeHow: "Neler yapıyor ↓", scroll: "Kaydır",
+    fl_copy: "Kopyala", fl_palette: "Komut paleti",
+    docTitle: "Gezer — Mac için Explorer tarzı dosya yöneticisi",
+    heroTitle: "Mac'indeki dosyalar, Explorer rahatlığında.",
+    heroLead: "Gezer çift bölmeli, sekmeli, ⌘K komut paletli, klasör karşılaştırma ve eşitleme, disk kullanım haritası ve yerleşik terminali olan hızlı, yerel bir dosya yöneticisi — Windows Explorer'da alıştığın her şey, macOS için.",
+    meta: "Ücretsiz · Sürüm 0.1.1 · macOS 14+ · Developer ID ile imzalı ve Apple onaylı",
+    moreTitle: "Kendini evinde hissettiren ayrıntılar.",
+    moreSub: "İlk gün fark edeceğin küçük şeyler — tamamı yerel SwiftUI, tamamı klavye dostu.",
+    finderTitle: "Gezer ve Finder, açık konuşalım.",
+    finderSub: "macOS hiçbir uygulamanın Finder'ın yerini almasına izin vermez — Finder hep çalışır ve sistemin bazı parçaları yalnızca onunla konuşur. Ama Launch Services üzerinden açılan her klasörü Gezer devralabilir.",
+    fYesT: "Gezer'de açılır", fNoT: "Finder'da kalır",
+    fYes: ["Terminal'de <code>open ~/Downloads</code>", "Klasör açan uygulamalar, klasör bağlantıları", "Gezer'in Dock simgesine bırakılan klasörler", "Finder'da sağ tık › Birlikte aç › Gezer"],
+    fNo: ["Masaüstü, Çöp Kutusu penceresi ve Dock yığınları", "Diğer uygulamalardaki “Finder'da göster”", "Finder'ın içinde bir klasöre çift tıklamak"],
+    shellT: "Gezer'i klasör işleyicisi yap", copy: "Kopyala", copied: "Kopyalandı ✓",
+    c1: "# klasörler Gezer'de açılır", c2: "# geri al: klasörleri Finder'a geri ver",
+    finderFine: "Ya da hiç uğraşma: Gezer'i Dock'ta tut ve klasörleri üzerine bırak, Finder'da <b>Birlikte aç › Gezer</b>'i kullan ya da <code>open -a Gezer ~/Downloads</code> çalıştır.",
+    finalTitle: "Gezmeye başla.",
+    finalText: "Ücretsiz, hesap yok, takip yok. Dosyaların olduğu yerde kalır — Gezer sadece aralarında daha hızlı dolaşmanı sağlar.",
+    finalMeta: "Sürüm 0.1.1 · 5,5 MB · macOS 14 Sonoma ya da üstü",
+    i1t: "İndir", i1p: "Gezer.dmg'yi yukarıdaki düğmeden ya da sürümler sayfasından al.",
+    i2t: "Uygulamalar'a sürükle", i2p: "DMG'yi aç ve Gezer'i Uygulamalar klasörüne sürükle.",
+    i3t: "Aç ve başla", i3p: "Developer ID ile imzalı ve Apple onaylı; uyarısız açılır.",
+    footer1: "Gezer 0.1.1 · macOS 14+ · Ücretsiz · Türkçe & English",
+    allReleases: "Tüm sürümler ve sürüm notları",
+    footer2: "Kurulum: DMG'yi aç ve Gezer'i Uygulamalar'a sürükle. Apple ya da Microsoft ile bağlantısı yoktur.",
+    m_cmp_title: "Karşılaştır", m_sync: "Eşitle ▾", m_sync1: "Yeni ve eksikleri kopyala → Sağa", m_sync2: "← Yeni ve eksikleri sola kopyala", m_sync3: "İki yönlü eşitle",
+    m_usage: "Disk kullanımı — ~", m_ops: "İşlemler", m_ops_sub: "Aynı birimdeki büyük işler sırayla çalışır",
+    m_conf_t: "Dosyaları değiştir veya atla", m_conf_s: "“report.pdf” “Backup” içinde zaten var.", m_conf_a: "3,1 MB · Bugün 14:02", m_conf_b: "2,9 MB · 3 Kas", m_conf_new: "Daha yeni · gelen", m_conf_old: "Var olan",
+    m_conf_all: "Bunu tüm 4 çakışma için yap", m_skip: "Atla", m_keep: "İkisini de sakla", m_replace: "Değiştir",
+    m_arc_in: "photos.zip içinde (salt okunur)", m_arc_ext: "Tümünü çıkar…", m_close: "Kapat",
+    m_ren_t: "5 öğeyi yeniden adlandır", m_ren_rep: "Metni değiştir", m_ren_add: "Metin ekle", m_ren_fmt: "Biçim", m_ren_name: "Ad", m_ren_start: "Başlangıç", m_ren_note: "Ya hepsi ya hiçbiri · tek Geri al adımı", m_cancel: "Vazgeç", m_rename: "Yeniden adlandır", m_ren_word: "Tatil",
+    m_srv_t: "Sunucuya bağlan", m_srv_fav: "Sık kullanılan sunucular", m_srv_rec: "Son kullanılan sunucular", m_srv_note: "Parolalar macOS'un kendi oturum açma penceresine gider — Gezer onları hiç görmez.", m_connect: "Bağlan",
+    items: n => `${n} öğe`, selected: (n, m) => `${n} öğe, ${m} seçili`, free: "212 GB kullanılabilir",
+    copying: (n, s) => `${n} öğe kopyalanıyor · ${s}`, copied: n => `✓ ${n} öğe kopyalandı · ⌘Z ile geri al`, moved: "✓ Backup'a taşındı · ⌘Z ile geri al",
+    keyCopy: "Diğer bölmeye kopyala", keyMove: "Diğer bölmeye taşı",
+    views: ["Ayrıntılar", "Liste", "Döşemeler", "Simgeler", "Sütunlar"], cols: ["Ad", "Değiştirme tarihi", "Tür", "Boyut"],
+    palPh: "Bir komut ya da klasör yaz…", palQuery: "klkar", palRan: "Klasörleri karşılaştır",
+    cmpSum: (s, n, o) => `${s} aynı · ${n} daha yeni · ${o} tek tarafta`, cmpNewer: "daha yeni", cmpOnly: "yalnız burada", cmpOlder: "daha eski", synced: "✓ 3 öğe eşitlendi · tek ⌘Z geri alır",
+    uTot: "214 GB · 38.912 öğe", dupeT: "Yinelenenleri bul", dupeS: "3 grup · 1,4 GB kazanılabilir", keepNewest: "En yeniyi sakla",
+    legend: ["Video", "Görüntü", "Kod", "Arşiv", "Diğer"],
+    jobs: [["214 öğe kopyalanıyor → Backup", "128 MB/sn · 42 sn kaldı"], ["“Footage” taşınıyor → Media", "Bekliyor · aynı birim"], ["photos.zip çıkarılıyor", "Duraklatıldı"]],
+    pause: "Duraklat", resume: "Sürdür", cancel: "Vazgeç", running: "Çalışıyor", qDone: "✓ Kopyalandı · “report 2.pdf” saklandı · ⌘Z Kopyalamayı geri al",
+    arcOpen: "Klasör olarak açıldı · salt okunur",
+    termHead: "Terminal · cd gezinmeyi izler", branch: "main ↑1 ●",
+    mounted: "“Media” bağlandı · 2,1 TB kullanılabilir",
+    kinds: { folder: "Klasör", doc: "PDF belgesi", img: "PNG görüntüsü", sheet: "Hesap tablosu", zip: "ZIP arşivi", video: "Film", code: "Kaynak kodu", md: "Markdown" },
+    today: "Bugün", yest: "Dün",
+  },
+};
+
+const STEPS = [
+  { id: "dual", icon: "▥", side: "projects", path: ["~", "Projects"], accent: ["#6ea2ff", "#f2b233"],
+    en: ["Dual pane", "Two folders side by side. F5 copies, F6 moves.", "Press ⇧⌘D and the window splits into two panes, each with its own folder. Select files, hit F5 or F6, and they land in the other pane — exactly the way Explorer and Total Commander hands expect.", ["Tab switches the active pane", "Every copy and move is one ⌘Z away", "Panes and folders come back next launch"]],
+    tr: ["Çift bölme", "İki klasör yan yana. F5 kopyalar, F6 taşır.", "⇧⌘D'ye bas, pencere her biri kendi klasörüne sahip iki bölmeye ayrılsın. Dosyaları seç, F5 ya da F6'ya bas; diğer bölmeye geçsinler — Explorer ve Total Commander alışkanlığıyla birebir.", ["Etkin bölmeyi Tab ile değiştir", "Her kopyalama ve taşıma bir ⌘Z uzağında", "Bölmeler ve klasörler sonraki açılışta geri gelir"]] },
+  { id: "views", icon: "☷", side: "documents", path: ["~", "Documents"], accent: ["#6ea2ff", "#9b85ff"],
+    en: ["Five views + tabs", "Details, List, Tiles, Icons, Columns.", "Pick the view that fits the folder — Gezer remembers it per folder. Details shows real recursive folder sizes, and native tabs (⌘T) keep a whole project one click away.", ["Folder sizes calculated in the background", "Sort, group and zoom remembered per folder", "Middle‑click a folder to open it in a new tab"]],
+    tr: ["Beş görünüm + sekmeler", "Ayrıntılar, Liste, Döşemeler, Simgeler, Sütunlar.", "Klasöre uyan görünümü seç — Gezer her klasör için hatırlar. Ayrıntılar gerçek, alt klasörleri de sayan klasör boyutlarını gösterir; yerel sekmeler (⌘T) bütün bir projeyi tek tık uzağında tutar.", ["Klasör boyutları arka planda hesaplanır", "Sıralama, gruplama ve yakınlaştırma klasör başına", "Bir klasörü orta tıkla yeni sekmede aç"]] },
+  { id: "palette", icon: "⌘", side: "projects", path: ["~", "Projects", "website"], accent: ["#ffd866", "#6ea2ff"],
+    en: ["Command palette", "⌘K, a few letters, Enter.", "Every command and folder is a fuzzy search away. Type “nf” for New Folder or “~/Down” for a path, Tab completes, ⌘Enter opens it in a new tab. Turkish letters match too: “indirilen” finds “İndirilenler”.", ["Commands show their shortcuts", "Quick access, recent folders and volumes", "Rebind any shortcut in Settings"]],
+    tr: ["Komut paleti", "⌘K, birkaç harf, Enter.", "Her komut ve klasör bulanık bir aramanın ucunda. Yeni klasör için “nf”, bir yol için “~/Down” yaz; Tab tamamlar, ⌘Enter yeni sekmede açar. Türkçe harfler de eşleşir: “indirilen” “İndirilenler”i bulur.", ["Komutlar kestirmeleriyle görünür", "Hızlı erişim, son klasörler ve birimler", "Her kestirmeyi Ayarlar'da değiştir"]] },
+  { id: "compare", icon: "⇄", side: "projects", path: ["~", "Projects", "website"], accent: ["#3fd68a", "#6ea2ff"],
+    en: ["Compare & sync", "Two folders, one glance at what changed.", "⌃⌘C marks every item in both panes: newer, older, only on one side, or the same. Then copy what's newer and missing to either side — or both. Sync never deletes, and one ⌘Z undoes it all.", ["“Differences only” hides the noise", "Replaced files go to the Trash, not oblivion", "One Undo step for the whole sync"]],
+    tr: ["Karşılaştır ve eşitle", "İki klasör, neyin değiştiği tek bakışta.", "⌃⌘C iki bölmedeki her öğeyi işaretler: daha yeni, daha eski, tek tarafta ya da aynı. Sonra yeni ve eksik olanları istediğin tarafa — ya da iki tarafa — kopyala. Eşitleme hiçbir şey silmez, tek ⌘Z hepsini geri alır.", ["“Yalnızca farklar” gürültüyü gizler", "Üzerine yazılanlar Çöp Kutusuna gider", "Bütün eşitleme için tek Geri al adımı"]] },
+  { id: "usage", icon: "▦", side: "home", path: ["~"], accent: ["#9b85ff", "#f2b233"],
+    en: ["Disk usage & duplicates", "See what's eating your disk.", "Analyze Disk Usage (⌥⌘U) draws a treemap colored by file type — click to zoom, Quick Look anything, trash what you don't need. Find Duplicates compares by size, then SHA‑256, and never counts clones twice.", ["Keep newest, oldest or shortest path", "Hard links and APFS clones count once", "Right from any folder's context menu"]],
+    tr: ["Disk kullanımı ve yinelenenler", "Diskini neyin doldurduğunu gör.", "Disk kullanımını çözümle (⌥⌘U) dosya türüne göre renklenen bir ağaç haritası çizer — yakınlaştırmak için tıkla, her şeye Hızlı Bakış'la bak, gereksizi Çöp Kutusuna at. Yinelenenleri bul önce boyuta, sonra SHA‑256'ya bakar; klonları iki kez saymaz.", ["En yeniyi, en eskiyi ya da en kısa yolu sakla", "Sabit bağlantılar ve APFS klonları tek sayılır", "Her klasörün bağlam menüsünden"]] },
+  { id: "queue", icon: "≡", side: "downloads", path: ["~", "Downloads"], accent: ["#6ea2ff", "#3fd68a"],
+    en: ["Operation queue", "Big copies in the background. Pause anytime.", "Copies, moves and extractions run as jobs with speed and time left. Pause, resume or cancel — even in the middle of a huge file. Name clashes get Explorer's “Replace or Skip Files” dialog, and every job is undoable.", ["Replace, Keep Both, Skip or Merge folders", "“Do this for all” for long batches", "Copy errors listed, failed items retried"]],
+    tr: ["İşlem kuyruğu", "Büyük kopyalamalar arka planda. İstediğin an duraklat.", "Kopyalama, taşıma ve çıkarma işleri hız ve kalan süreyle iş olarak çalışır. Duraklat, sürdür ya da vazgeç — dev bir dosyanın ortasında bile. Ad çakışmalarında Explorer'ın “Dosyaları değiştir veya atla” penceresi çıkar ve her iş geri alınabilir.", ["Değiştir, İkisini de sakla, Atla ya da klasörleri birleştir", "Uzun işler için “Tümü için yap”", "Kopyalama hataları listelenir, başarısızlar yeniden denenir"]] },
+  { id: "archive", icon: "⧉", side: "downloads", path: ["~", "Downloads"], accent: ["#f2b233", "#ffd866"],
+    en: ["Archives as folders", "Double‑click a zip. You're inside.", "Zip, 7z, rar and tar archives open like ordinary folders, the way Explorer does it. Browse, Quick Look and copy files out; a banner reminds you it's read‑only and offers Extract All.", ["Compress and Extract Here from the menu", "Extracted once, cached while unchanged", "Back or Up returns you to the real folder"]],
+    tr: ["Klasör olarak arşivler", "Bir zip'e çift tıkla. İçindesin.", "Zip, 7z, rar ve tar arşivleri Explorer'daki gibi sıradan klasörler gibi açılır. Gez, Hızlı Bakış'la bak, dosyaları dışarı kopyala; bir şerit salt okunur olduğunu hatırlatır ve Tümünü çıkar'ı sunar.", ["Menüden Sıkıştır ve Buraya çıkar", "Bir kez çıkarılır, değişmedikçe yeniden kullanılır", "Geri ya da Üst klasör seni gerçek klasöre döndürür"]] },
+  { id: "rename", icon: "✎", side: "pictures", path: ["~", "Pictures", "Trip"], accent: ["#ff8a65", "#ffd866"],
+    en: ["Batch rename", "Rename a hundred files like one.", "Select several items and press F2: replace text, add text, or number them “Name 001”. A live preview shows every new name, conflicts are caught before you click, and the whole batch is a single Undo.", ["Live preview of every result", "All renamed or none — rolls back on failure", "Plus quick actions: rotate, convert, merge PDFs"]],
+    tr: ["Toplu yeniden adlandırma", "Yüz dosyayı tek dosya gibi adlandır.", "Birkaç öğe seç ve F2'ye bas: metni değiştir, metin ekle ya da “Ad 001” biçiminde numarala. Canlı önizleme her yeni adı gösterir, çakışmalar tıklamadan önce yakalanır ve bütün iş tek bir Geri al'dır.", ["Her sonucun canlı önizlemesi", "Ya hepsi ya hiçbiri — hata olursa geri döner", "Ayrıca hızlı eylemler: döndür, dönüştür, PDF birleştir"]] },
+  { id: "terminal", icon: "›_", side: "projects", path: ["~", "Projects", "website"], accent: ["#3fd68a", "#ffd866"],
+    en: ["Terminal, Git & iCloud", "Your shell, docked under the files.", "Press ⌃` for a real terminal panel running your login shell. It follows you: change folder and it cd's along. Git badges mark modified, added and untracked files; iCloud badges show what's in the cloud and what's on this Mac.", ["Branch, ahead/behind and changes in the status bar", "Download Now / Remove Download for iCloud items", "Read‑only git calls — never writes to your repo"]],
+    tr: ["Terminal, Git ve iCloud", "Kabuğun, dosyaların hemen altında.", "⌃`'ye bas, giriş kabuğunu çalıştıran gerçek bir terminal paneli açılsın. Seni izler: klasör değiştir, o da cd yapsın. Git rozetleri değişen, eklenen ve izlenmeyen dosyaları işaretler; iCloud rozetleri neyin bulutta, neyin bu Mac'te olduğunu gösterir.", ["Dal, önde/geride ve değişiklikler durum çubuğunda", "iCloud öğeleri için Şimdi indir / İndirmeyi kaldır", "Git yalnızca okunur — deponuza asla yazmaz"]] },
+  { id: "server", icon: "⇅", side: "media", path: ["Media"], accent: ["#6ea2ff", "#9b85ff"],
+    en: ["Connect to Server", "Your NAS, one shortcut away.", "⌃⌘K mounts SMB, AFP, NFS and WebDAV shares — even Windows‑style \\\\host\\share paths. Favorites and recent servers are kept for you; SFTP works too when sshfs is installed.", ["Credentials stay in your macOS keychain", "Mounted shares appear in the sidebar with Eject", "Falls back to Finder if a mount fails"]],
+    tr: ["Sunucuya bağlan", "NAS'ın bir kestirme uzağında.", "⌃⌘K SMB, AFP, NFS ve WebDAV paylaşımlarını bağlar — Windows usulü \\\\host\\share yollarını bile. Sık kullanılan ve son kullanılan sunucular saklanır; sshfs kuruluysa SFTP de çalışır.", ["Kimlik bilgileri macOS anahtar zincirinde kalır", "Bağlanan paylaşımlar kenar çubuğunda Çıkar düğmesiyle", "Bağlanamazsa Finder'a devreder"]] },
+];
+
+const SIDE = [
+  [{ en: "Quick access", tr: "Hızlı erişim" }],
+  ["home", "⌂", { en: "Home", tr: "Ana klasör" }],
+  ["desktop", "▭", { en: "Desktop", tr: "Masaüstü" }],
+  ["documents", "▤", { en: "Documents", tr: "Belgeler" }],
+  ["downloads", "↓", { en: "Downloads", tr: "İndirilenler" }],
+  ["pictures", "◫", { en: "Pictures", tr: "Resimler" }],
+  ["projects", "★", { en: "Projects", tr: "Projects" }],
+  ["icloud", "☁", { en: "iCloud Drive", tr: "iCloud Drive" }],
+  [{ en: "This Mac", tr: "Bu Mac" }],
+  ["hd", "◉", { en: "Macintosh HD", tr: "Macintosh HD" }],
+  ["media", "⇅", { en: "Media", tr: "Media" }],
+  ["trash", "⌫", { en: "Trash", tr: "Çöp Kutusu" }],
+];
+
+const MORE = [
+  ["⌕", { en: "Search as you type", tr: "Yazdıkça ara" }, { en: "⌘F filters instantly, ignores accents and Turkish ı/İ, and understands kind:pdf, size:>100MB or tür:belge.", tr: "⌘F anında süzer; aksanları ve Türkçe ı/İ farkını yok sayar, kind:pdf, size:>100MB ya da tür:belge filtrelerini anlar." }],
+  ["◧", { en: "Preview pane & Quick Look", tr: "Önizleme bölmesi ve Hızlı Bakış" }, { en: "⌥⌘P shows Explorer's preview pane on the right; Space opens Quick Look anywhere.", tr: "⌥⌘P sağda Explorer'ın önizleme bölmesini açar; Boşluk her yerde Hızlı Bakış'ı açar." }],
+  ["●", { en: "Finder tags", tr: "Finder etiketleri" }, { en: "Colored tag dots in every view, shared with Finder, so nothing gets lost between the two.", tr: "Her görünümde renkli etiket noktaları, Finder ile ortak; ikisi arasında hiçbir şey kaybolmaz." }],
+  ["↺", { en: "Session restore", tr: "Oturumu geri yükleme" }, { en: "Quit and come back to the same windows, tabs, panes, folders and views. Keeps running like Finder when the last window closes.", tr: "Çık ve aynı pencerelere, sekmelere, bölmelere, klasörlere ve görünümlere geri dön. Son pencere kapanınca Finder gibi çalışmaya devam eder." }],
+  ["◐", { en: "Themes, density & shortcuts", tr: "Tema, yoğunluk ve kestirmeler" }, { en: "Light, dark, accent color, compact to comfortable rows, a “Windows‑like” mode — and every shortcut rebindable, with import/export.", tr: "Açık, koyu, vurgu rengi, sıkışıktan rahata satır yoğunluğu, “Windows benzeri” mod — ve içe/dışa aktarılabilen, değiştirilebilir tüm kestirmeler." }],
+  ["⚡", { en: "Quick actions", tr: "Hızlı eylemler" }, { en: "Rotate and resize images, convert to JPEG/PNG/HEIC, merge into one PDF — in the background, undoable.", tr: "Görüntüleri döndür ve yeniden boyutlandır, JPEG/PNG/HEIC'e dönüştür, tek PDF'te birleştir — arka planda, geri alınabilir." }],
+  ["⌫", { en: "A Trash that undoes", tr: "Geri alınabilen Çöp Kutusu" }, { en: "Trash in the sidebar, Put Back for what Gezer moved there, and ⌘Z for every delete.", tr: "Kenar çubuğunda Çöp Kutusu, Gezer'in oraya taşıdıkları için Geri koy ve her silme için ⌘Z." }],
+  ["⇥", { en: "Copy to… / Move to…", tr: "Şuraya kopyala… / taşı…" }, { en: "⇧⌘C and ⇧⌘M pick a destination from the other pane, recent places or Quick access.", tr: "⇧⌘C ve ⇧⌘M hedefi diğer bölmeden, son kullanılan yerlerden ya da Hızlı erişimden seçer." }],
+  ["TR", { en: "Türkçe & English", tr: "Türkçe ve İngilizce" }, { en: "A full Turkish UI with Explorer's own terminology. Follows your Mac's language, or pick one in Settings.", tr: "Explorer'ın kendi terimleriyle eksiksiz Türkçe arayüz. Mac'inin dilini izler ya da Ayarlar'dan seç." }],
+];
+
+const CMDS = [
+  ["⌘", { en: "Compare Folders", tr: "Klasörleri karşılaştır" }, "⌃⌘C"],
+  ["⌘", { en: "Compress", tr: "Sıkıştır" }, ""],
+  ["⌘", { en: "Copy to…", tr: "Şuraya kopyala…" }, "⇧⌘C"],
+  ["⌘", { en: "Connect to Server…", tr: "Sunucuya bağlan…" }, "⌃⌘K"],
+  ["⌘", { en: "Analyze Disk Usage…", tr: "Disk kullanımını çözümle…" }, "⌥⌘U"],
+  ["⌘", { en: "Find Duplicates…", tr: "Yinelenenleri bul…" }, ""],
+  ["⌘", { en: "Show Terminal", tr: "Terminal'i göster" }, "⌃`"],
+  ["⌘", { en: "New Folder", tr: "Yeni klasör" }, "⇧⌘N"],
+  ["▸", { en: "website — ~/Projects", tr: "website — ~/Projects" }, ""],
+  ["▸", { en: "Downloads", tr: "İndirilenler" }, ""],
+];
+// @data-end
+
+let lang = "en";
+try { const s = localStorage.getItem("gezer-lang"); if (s === "en" || s === "tr") lang = s; else throw 0; }
+catch (e) { lang = (navigator.language || "en").toLowerCase().startsWith("tr") ? "tr" : "en"; }
+const L = () => T[lang];
+const num = s => lang === "tr" ? s.replace(/(\d)\.(\d)/g, "$1,$2") : s;
+
+// ---------------------------------------------------------------- build DOM
+const stepsEl = document.getElementById("steps");
+const progressEl = document.getElementById("progress");
+STEPS.forEach((s, i) => {
+  const d = document.createElement("div");
+  d.className = "step"; d.dataset.i = i; d.id = "f-" + s.id;
+  stepsEl.appendChild(d);
+  const a = document.createElement("a"); a.href = "#f-" + s.id; progressEl.appendChild(a);
+});
+
+function renderText() {
+  document.documentElement.lang = lang;
+  document.title = L().docTitle;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const v = L()[el.dataset.i18n];
+    if (typeof v === "string") el.textContent = v;
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = L()[el.dataset.i18nHtml]; });
+  document.querySelectorAll(".lang button").forEach(b => { const on = b.dataset.lang === lang; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+  STEPS.forEach((s, i) => {
+    const [kicker, title, body, bullets] = s[lang];
+    stepsEl.children[i].innerHTML =
+      `<div class="kicker"><i aria-hidden="true">${s.icon}</i>${kicker}</div><h2>${title}</h2><p>${body}</p><ul>${bullets.map(b => `<li>${b}</li>`).join("")}</ul>`;
+    progressEl.children[i].title = kicker;
+    progressEl.children[i].setAttribute("aria-label", kicker);
+  });
+  document.getElementById("side").innerHTML = SIDE.map(r =>
+    r.length === 1 ? `<div class="sec">${r[0][lang]}</div>`
+      : `<div class="it${r[0] === "media" ? " hid" : ""}" data-side="${r[0]}"><span class="ic">${r[1]}</span>${r[2][lang]}${r[0] === "media" ? '<span class="ej">⏏</span>' : ""}</div>`).join("");
+  document.getElementById("cards").innerHTML = MORE.map(m =>
+    `<div class="feat reveal"><div class="e" aria-hidden="true">${m[0]}</div><h3>${m[1][lang]}</h3><p>${m[2][lang]}</p></div>`).join("");
+  document.getElementById("fYes").innerHTML = L().fYes.map(x => `<li><span>${x}</span></li>`).join("");
+  document.getElementById("fNo").innerHTML = L().fNo.map(x => `<li><span>${x}</span></li>`).join("");
+  observeReveals();
+  if (current >= 0) { const c = current; current = -1; activate(c); }
+}
+document.querySelectorAll(".lang button").forEach(b => b.onclick = () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem("gezer-lang", lang); } catch (e) {}
+  renderText();
+});
+
+document.getElementById("copyBtn").onclick = async e => {
+  const txt = "brew install duti\nduti -s com.gezer.app public.folder viewer";
+  try { await navigator.clipboard.writeText(txt); e.target.textContent = L().copied; setTimeout(() => e.target.textContent = L().copy, 1600); } catch (err) {}
+};
+
+// ---------------------------------------------------------------- helpers
+let timers = [];
+const later = (ms, fn) => timers.push(setTimeout(fn, ms));
+const every = (ms, fn) => timers.push(setInterval(fn, ms));
+function clearTimers() { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; }
+const $ = (sel, el = document) => el.querySelector(sel);
+const fileRow = (f, extra = "") => `<div class="fr ${extra}"><span class="fi ${f[1]}"></span><span class="nm">${f[0]}</span>${f[4] || ""}<span class="sz">${num(f[2] || "")}</span></div>`;
+function setStatus(left, right) { $("#sbL").textContent = left; $("#sbR").textContent = right ?? L().free; }
+function setProgress(p) { const bar = $("#sbP"); bar.classList.toggle("on", p !== null); $("#sbBar").style.width = (p || 0) + "%"; }
+function setAddr(segs) { $("#addr").innerHTML = segs.map(s => `<span>${s}</span>`).join("<i>›</i>"); }
+function animateProgress(ms, done) {
+  const st = performance.now();
+  const tick = n => { const p = Math.min(1, (n - st) / ms); setProgress(p * 100); if (p < 1 && timers.length) requestAnimationFrame(tick); else done && done(); };
+  requestAnimationFrame(tick);
+}
+function typeInto(el, text, start, step, onEach) {
+  el.textContent = "";
+  [...text].forEach((ch, i) => later(start + i * step, () => { el.textContent = text.slice(0, i + 1); onEach && onEach(text.slice(0, i + 1)); }));
+  return start + text.length * step;
+}
+
+const FILES = [
+  ["website", "folder", "48 MB", 0, "folder"], ["assets", "folder", "12 MB", 1, "folder"], ["notes", "folder", "2.4 MB", 3, "folder"],
+  ["report.pdf", "doc", "3.1 MB", 0, "doc"], ["budget.xlsx", "xls", "96 KB", 2, "sheet"], ["logo.png", "img", "420 KB", 5, "img"],
+  ["photos.zip", "zip", "820 MB", 9, "zip"], ["intro.mov", "video", "1.2 GB", 12, "video"],
+];
+const dateOf = d => d === 0 ? `${L().today} 14:02` : d === 1 ? `${L().yest} 09:40` : (lang === "tr" ? `${12 - d}.11.2026` : `Nov ${12 - d}, 2026`);
+
+// ---------------------------------------------------------------- scenes
+const scenes = {
+  dual(el) {
+    const left = FILES.slice(0, 6).map(f => f.slice(0, 3));
+    const right = [["2025", "folder", "4.2 GB"], ["2026", "folder", "1.9 GB"], ["readme.md", "md", "4 KB"]];
+    const L1 = $("#dL .rows", el), R1 = $("#dR .rows", el), key = $("#dKey", el);
+    L1.innerHTML = left.map(f => fileRow(f)).join(""); R1.innerHTML = right.map(f => fileRow(f)).join("");
+    $("#dL", el).classList.add("on"); $("#dR", el).classList.remove("on"); key.classList.remove("on");
+    $("#tbDual").classList.add("on");
+    const rows = [...L1.children];
+    const cnt = () => { $("#dLn", el).textContent = L().items(L1.querySelectorAll(".fr:not(.gone)").length); $("#dRn", el).textContent = L().items(R1.children.length); };
+    cnt(); setStatus(L().items(6)); setProgress(null);
+    later(700, () => { rows[3].classList.add("sel"); });
+    later(1000, () => { rows[5].classList.add("sel"); setStatus(L().selected(6, 2)); });
+    later(1600, () => { key.innerHTML = `<kbd>F5</kbd>${L().keyCopy}`; key.classList.add("on"); setStatus(L().copying(2, num("3.5 MB"))); animateProgress(1100); });
+    later(2800, () => {
+      key.classList.remove("on"); setProgress(null);
+      R1.insertAdjacentHTML("beforeend", fileRow(left[3], "pop") + fileRow(left[5], "pop")); cnt();
+      setStatus(L().copied(2));
+      rows[3].classList.remove("sel"); rows[5].classList.remove("sel");
+    });
+    later(4200, () => { rows[4].classList.add("sel"); setStatus(L().selected(6, 1)); });
+    later(4700, () => { key.innerHTML = `<kbd>F6</kbd>${L().keyMove}`; key.classList.add("on"); });
+    later(5400, () => {
+      key.classList.remove("on"); rows[4].classList.add("gone");
+      R1.insertAdjacentHTML("beforeend", fileRow(left[4], "pop")); cnt(); setStatus(L().moved);
+    });
+    later(6400, () => { $("#dL", el).classList.remove("on"); $("#dR", el).classList.add("on"); setStatus(L().items(6), num("1.4 TB") + (lang === "tr" ? " kullanılabilir" : " available")); });
+  },
+  views(el) {
+    const seg = $("#vSeg", el), box = $("#vBox", el);
+    seg.innerHTML = L().views.map(v => `<span>${v}</span>`).join("");
+    const k = f => L().kinds[f[4]];
+    const modes = [
+      () => `<div class="dt hd">${L().cols.map(c => `<span>${c}</span>`).join("")}</div>` +
+            FILES.map((f, i) => `<div class="dt${i === 0 ? " sel" : ""}"><span><i class="fi ${f[1]}"></i>${f[0]}</span><span>${dateOf(f[3])}</span><span>${k(f)}</span><span>${num(f[2])}</span></div>`).join(""),
+      () => `<div class="lv">${FILES.concat([["todo.md", "md"], ["app.js", "code"]]).map((f, i) => fileRow([f[0], f[1]], i === 0 ? "sel" : "")).join("")}</div>`,
+      () => `<div class="tiles">${FILES.map((f, i) => `<div class="tile${i === 0 ? " sel" : ""}"><span class="ib"><i class="fi ${f[1]}"></i></span><div><b>${f[0]}</b><small>${k(f)} · ${num(f[2])}</small></div></div>`).join("")}</div>`,
+      () => `<div class="icons">${FILES.map((f, i) => `<div class="icn${i === 0 ? " sel" : ""}"><span class="ib"><i class="fi ${f[1]}"></i></span><span>${f[0]}</span></div>`).join("")}</div>`,
+      () => `<div class="cols"><div class="rows">${[["Projects", "folder"], ["Documents", "folder"], ["Downloads", "folder"], ["Pictures", "folder"]].map((f, i) => fileRow(f, i === 1 ? "sel" : "")).join("")}</div>` +
+            `<div class="rows">${FILES.slice(0, 5).map((f, i) => fileRow([f[0], f[1], ""], i === 3 ? "sel" : "")).join("")}</div>` +
+            `<div><span class="ib" style="width:60px;height:56px"><i class="fi doc" style="transform:scale(3.4)"></i></span><b style="color:var(--text)">report.pdf</b><span>${k(FILES[3])} · ${num("3.1 MB")}</span></div></div>`,
+    ];
+    let m = 0;
+    const show = () => {
+      [...seg.children].forEach((s, i) => s.classList.toggle("on", i === m));
+      box.classList.add("fade");
+      later(220, () => { box.innerHTML = modes[m](); box.classList.remove("fade"); m = (m + 1) % modes.length; });
+    };
+    box.innerHTML = modes[0](); [...seg.children].forEach((s, i) => s.classList.toggle("on", i === 0)); m = 1;
+    setStatus(L().items(8) + " · Σ"); setProgress(null);
+    every(1900, show);
+  },
+  palette(el) {
+    const under = $("#pUnder", el), pal = $("#pal", el), q = $("#pQ", el), res = $("#pRes", el), ph = $("#pPh", el);
+    $("#pRows", el).innerHTML = [["assets", "folder", "12 MB"], ["src", "folder", "3.2 MB"], ["index.html", "code", "18 KB"], ["style.css", "code", "9 KB"], ["app.js", "code", "41 KB"], ["README.md", "md", "4 KB"]].map(f => fileRow(f)).join("");
+    under.classList.remove("blur"); pal.classList.remove("on"); q.textContent = ""; ph.textContent = L().palPh;
+    setStatus(L().items(6)); setProgress(null);
+    const render = query => {
+      const out = [];
+      CMDS.forEach(c => {
+        const name = c[1][lang], low = name.toLowerCase(); let j = 0; const pos = [];
+        for (let i = 0; i < low.length && j < query.length; i++) if (low[i] === query[j]) { pos.push(i); j++; }
+        if (j === query.length) out.push([c, name, pos, pos.length ? pos[pos.length - 1] - pos[0] : 0]);
+      });
+      out.sort((a, b) => a[3] - b[3]);
+      res.innerHTML = out.slice(0, 6).map((o, i) => {
+        const hl = [...o[1]].map((ch, k) => o[2].includes(k) ? `<b>${ch}</b>` : ch).join("");
+        return `<div class="pr${i === 0 ? " sel" : ""}"><span class="cat">${o[0][0]}</span><span class="nm">${hl}</span><span class="k">${o[0][2]}</span></div>`;
+      }).join("");
+    };
+    later(500, () => { under.classList.add("blur"); pal.classList.add("on"); render(""); });
+    const end = typeInto(q, L().palQuery, 1300, 330, s => { ph.textContent = ""; render(s); });
+    later(end + 700, () => { const s = $(".pr.sel", res); s && (s.style.filter = "brightness(1.4)"); });
+    later(end + 1000, () => { pal.classList.remove("on"); under.classList.remove("blur"); setStatus("⌃⌘C · " + L().palRan); });
+  },
+  compare(el) {
+    // name, type, size, left state, right state  (state: n=newer, o=older, s=same, x=only, -=absent)
+    const D = [["index.html", "code", "18 KB", "n", "o"], ["style.css", "code", "9 KB", "s", "s"], ["app.js", "code", "41 KB", "o", "n"], ["logo.svg", "img", "6 KB", "x", "-"], ["fonts", "folder", "1.1 MB", "s", "s"], ["notes.md", "md", "2 KB", "-", "x"], ["hero.jpg", "img", "640 KB", "x", "-"]];
+    const Lr = $("#cL .rows", el), Rr = $("#cR .rows", el), menu = $("#cMenu", el), toast = $("#cToast", el);
+    menu.classList.remove("on"); toast.classList.remove("on");
+    const mk = st => st === "n" ? `<span class="mk newer">▲ ${L().cmpNewer}</span>` : st === "o" ? `<span class="mk older">${L().cmpOlder}</span>` : st === "x" ? `<span class="mk only">＋ ${L().cmpOnly}</span>` : "";
+    const draw = (marks, side) => D.filter(d => d[side] !== "-").map(d => fileRow([d[0], d[1], d[2], 0, marks ? mk(d[side]) : ""], marks && d[side] === "s" ? "same" : "")).join("");
+    Lr.innerHTML = draw(false, 3); Rr.innerHTML = draw(false, 4);
+    $("#cSum", el).textContent = "…";
+    setStatus(L().items(6)); setProgress(null);
+    later(700, () => { Lr.innerHTML = draw(true, 3); Rr.innerHTML = draw(true, 4); $("#cSum", el).textContent = L().cmpSum(2, 2, 3); });
+    later(2300, () => menu.classList.add("on"));
+    later(3300, () => {
+      menu.classList.remove("on");
+      animateProgress(900, () => {
+        D.forEach(d => { if (d[3] === "x") d[4] = "s"; if (d[3] === "n") { d[4] = "s"; } if (d[3] === "x") d[3] = "s"; if (d[0] === "index.html") d[3] = "s"; });
+        Lr.innerHTML = draw(true, 3);
+        Rr.innerHTML = draw(true, 4);
+        [...Rr.children].forEach(r => { if (/logo\.svg|hero\.jpg|index\.html/.test(r.textContent)) r.classList.add("pop"); });
+        $("#cSum", el).textContent = L().cmpSum(5, 1, 1);
+        setProgress(null); toast.textContent = L().synced; toast.classList.add("on");
+      });
+    });
+  },
+  usage(el) {
+    const C = { v: "#7c63e6", i: "#e8775a", c: "#2f6fd6", a: "#d99a1e", o: "#4b5672" };
+    const R = [
+      ["Trip 2026.mov", "v", 0, 0, 44, 58, "38 GB"], ["Render.mp4", "v", 0, 58, 26, 42, "21 GB"], ["Screen.mov", "v", 26, 58, 18, 42, "12 GB"],
+      ["Photos Library", "i", 44, 0, 30, 32, "26 GB"], ["RAW", "i", 44, 32, 17, 24, "11 GB"], ["Scans", "i", 61, 32, 13, 24, "6 GB"],
+      ["node_modules", "c", 44, 56, 17, 44, "14 GB"], ["DerivedData", "c", 61, 56, 13, 26, "8 GB"], ["src", "c", 61, 82, 13, 18, "2 GB"],
+      ["backup.7z", "a", 74, 0, 26, 24, "17 GB"], ["photos.zip", "a", 74, 24, 13, 18, "8 GB"], ["old.tar", "a", 87, 24, 13, 18, "5 GB"],
+      ["Library", "o", 74, 42, 26, 30, "19 GB"], ["Mail", "o", 74, 72, 14, 28, "7 GB"], ["…", "o", 88, 72, 12, 28, "4 GB"],
+    ];
+    const tm = $("#tm", el), dupe = $("#dupe", el);
+    tm.innerHTML = R.map((r, i) => `<i style="left:${r[2]}%;top:${r[3]}%;width:${r[4]}%;height:${r[5]}%;background:${C[r[1]]};transition-delay:${i * 45}ms">${r[4] * r[5] > 250 ? `${r[0]}<small>${num(r[6])}</small>` : ""}</i>`).join("");
+    $("#uLeg", el).innerHTML = L().legend.map((n, i) => `<span><i style="background:${Object.values(C)[i]}"></i>${n}</span>`).join("");
+    $("#uTot", el).textContent = L().uTot;
+    dupe.classList.remove("on");
+    dupe.innerHTML = `<b>${L().dupeT}</b><div style="color:var(--muted);margin:2px 0 6px">${L().dupeS}</div>` +
+      [["IMG_2041.HEIC", "img", "4.2 MB"], ["IMG_2041 copy.HEIC", "img", "4.2 MB"], ["Render final.mp4", "video", "1.2 GB"]].map(f => fileRow(f)).join("") +
+      `<div class="btns" style="margin-top:6px"><span class="pri">${L().keepNewest}</span></div>`;
+    setStatus(L().uTot); setProgress(null);
+    const cells = [...tm.children];
+    let k = 0; const hot = [0, 6, 9, 3];
+    every(1100, () => { cells.forEach(c => c.classList.remove("hot")); cells[hot[k++ % hot.length]].classList.add("hot"); });
+    later(2600, () => dupe.classList.add("on"));
+  },
+  queue(el) {
+    const box = $("#jobs", el), sheet = $("#qSheet", el), toast = $("#qToast", el);
+    const J = L().jobs;
+    const pct = [18, 0, 46];
+    box.innerHTML = J.map((j, i) => `<div class="job card${i === 2 ? " paused" : ""}"><div class="top"><span class="fi ${["folder", "video", "zip"][i]}"></span><b>${j[0]}</b><span class="ctl"><span class="pz">${i === 2 ? L().resume : L().pause}</span><span>${L().cancel}</span></span></div><div class="bar"><i style="width:${pct[i]}%"></i></div><div class="info">${j[1]}</div></div>`).join("");
+    sheet.classList.remove("on"); toast.classList.remove("on"); $("#qKeep", el).classList.remove("press");
+    const jobs = [...box.children], bar = i => $(".bar i", jobs[i]);
+    setStatus(J[0][0]); setProgress(18);
+    let p0 = 18, p2 = 46, run2 = false;
+    every(250, () => { p0 = Math.min(96, p0 + 2.4); bar(0).style.width = p0 + "%"; setProgress(p0); if (run2) { p2 = Math.min(100, p2 + 2); bar(2).style.width = p2 + "%"; } });
+    later(1300, () => { const b = $(".pz", jobs[2]); b.classList.add("press"); later(250, () => { b.classList.remove("press"); b.textContent = L().pause; jobs[2].classList.remove("paused"); $(".info", jobs[2]).textContent = L().running; run2 = true; }); });
+    later(2700, () => sheet.classList.add("on"));
+    later(4200, () => $("#qKeep", el).classList.add("press"));
+    later(4500, () => { sheet.classList.remove("on"); toast.textContent = L().qDone; toast.classList.add("on"); });
+  },
+  archive(el) {
+    const rows = $("#aRows", el), ban = $("#aBan", el);
+    const outside = [["Invoices", "folder", "8 MB"], ["photos.zip", "zip", "820 MB"], ["setup.dmg", "drive", "212 MB"], ["slides.pdf", "doc", "5.4 MB"], ["song.m4a", "video", "7.1 MB"]];
+    const inside = [["Istanbul", "folder", "310 MB"], ["Kapadokya", "folder", "402 MB"], ["IMG_0412.HEIC", "img", "3.8 MB"], ["IMG_0413.HEIC", "img", "4.0 MB"], ["clip.mov", "video", "96 MB"]];
+    rows.innerHTML = outside.map(f => fileRow(f)).join(""); ban.classList.remove("on");
+    setAddr(["~", lang === "tr" ? "İndirilenler" : "Downloads"]);
+    setStatus(L().items(5)); setProgress(null);
+    later(900, () => rows.children[1].classList.add("sel", "dbl"));
+    later(2000, () => {
+      setAddr(["~", lang === "tr" ? "İndirilenler" : "Downloads", "photos.zip"]);
+      ban.classList.add("on");
+      rows.innerHTML = inside.map(f => fileRow(f, "pop")).join("");
+      setStatus(L().arcOpen);
+    });
+    later(3400, () => rows.children[2].classList.add("sel"));
+  },
+  rename(el) {
+    const input = $("#rIn", el), pv = $("#rPv", el), go = $("#rGo", el);
+    const src = ["IMG_4401.HEIC", "IMG_4402.HEIC", "IMG_4417.HEIC", "DSC_0815.JPG", "IMG_4420.HEIC"];
+    const draw = name => pv.innerHTML = src.map((s, i) => `<div><span>${s}</span><i>→</i><span>${name ? `${name} ${String(i + 1).padStart(3, "0")}${s.slice(s.lastIndexOf("."))}` : s}</span></div>`).join("");
+    draw(""); go.classList.remove("press");
+    setStatus(L().selected(24, 5)); setProgress(null);
+    const end = typeInto(input, L().m_ren_word, 700, 180, s => draw(s));
+    later(end + 900, () => go.classList.add("press"));
+    later(end + 1200, () => { go.classList.remove("press"); setStatus("✓ " + L().selected(24, 5) + " · ⌘Z"); });
+  },
+  terminal(el) {
+    const rows = $("#gRows", el), term = $("#term", el);
+    const g = b => `<span class="gb ${b}">${b === "I" ? "" : b}</span>`;
+    const files = [["assets", "folder", "12 MB", 0, g("I")], ["src", "folder", "3.2 MB", 0, g("M")], ["index.html", "code", "18 KB", 0, g("M")], ["app.js", "code", "41 KB", 0, g("A")], ["draft.md", "md", "2 KB", 0, g("U")], ["Shared.key", "doc", "22 MB", 0, '<span class="ic-cl">☁</span>']];
+    rows.innerHTML = files.map(f => `<div class="fr">${f[4]}<span class="fi ${f[1]}"></span><span class="nm">${f[0]}</span><span class="sz">${num(f[2])}</span></div>`).join("");
+    $("#tbTerm").classList.add("on");
+    setStatus(L().items(6) + " · ⎇ " + L().branch); setProgress(null);
+    const prompt = dir => `<span class="p">➜</span> <span style="color:#9cc0ff">${dir}</span> <span class="br">(main)</span> `;
+    const lines = [];
+    const paint = () => { term.innerHTML = `<div class="th"><span>${L().termHead}</span><span>zsh</span></div>` + lines.slice(-6).map(l => `<div class="l">${l}</div>`).join(""); };
+    lines.push(prompt("website")); paint();
+    const cmd = "git status --short";
+    [...cmd].forEach((c, i) => later(500 + i * 55, () => { lines[lines.length - 1] = prompt("website") + cmd.slice(0, i + 1); paint(); }));
+    later(1700, () => { lines.push('<span class="m"> M</span> index.html', '<span class="m"> M</span> src/main.ts', '<span class="a">A </span> app.js', '<span class="u">??</span> draft.md', prompt("website")); paint(); });
+    later(3100, () => { rows.children[1].classList.add("sel", "dbl"); });
+    later(3700, () => {
+      setAddr(["~", "Projects", "website", "src"]);
+      rows.innerHTML = [["main.ts", "code", "12 KB", 0, g("M")], ["util.ts", "code", "4 KB", 0, g("I")], ["types.ts", "code", "2 KB", 0, g("I")]].map(f => `<div class="fr pop">${f[4]}<span class="fi ${f[1]}"></span><span class="nm">${f[0]}</span><span class="sz">${num(f[2])}</span></div>`).join("");
+      lines[lines.length - 1] = prompt("website") + "<span style=\"color:var(--dim)\">cd -- '~/Projects/website/src'</span>"; lines.push(prompt("src")); paint();
+    });
+  },
+  server(el) {
+    const sheet = $("#sSheet", el), input = $("#sIn", el), rows = $("#sRows", el), go = $("#sGo", el);
+    rows.innerHTML = ""; sheet.classList.remove("on"); go.classList.remove("press");
+    const media = $('#side .it[data-side="media"]'); media && media.classList.add("hid");
+    setAddr(["~"]); setStatus(""); setProgress(null);
+    later(400, () => sheet.classList.add("on"));
+    const end = typeInto(input, "smb://nas.local/Media", 1000, 70);
+    later(end + 500, () => go.classList.add("press"));
+    later(end + 800, () => { go.classList.remove("press"); sheet.classList.remove("on"); });
+    later(end + 1300, () => {
+      const m = $('#side .it[data-side="media"]'); if (m) { m.classList.remove("hid"); m.classList.add("pop", "on"); }
+      setAddr(["Media"]);
+      rows.innerHTML = [["Movies", "folder", "1.2 TB"], ["Music", "folder", "186 GB"], ["Photos", "folder", "412 GB"], ["Backups", "folder", "640 GB"], ["Footage", "folder", "88 GB"]].map(f => fileRow(f, "pop")).join("");
+      setStatus(L().items(5), L().mounted);
+    });
+  },
+};
+
+// ---------------------------------------------------------------- scroll logic
+let current = -1;
+const sceneEls = [...document.querySelectorAll(".scene")];
+function activate(i) {
+  if (i === current) return;
+  current = i;
+  clearTimers();
+  const s = STEPS[i];
+  document.documentElement.style.setProperty("--accent", s.accent[0]);
+  document.documentElement.style.setProperty("--accent2", s.accent[1]);
+  [...stepsEl.children].forEach((el, k) => el.classList.toggle("active", k === i));
+  [...progressEl.children].forEach((el, k) => el.classList.toggle("on", k === i));
+  if (s.id !== "server") { const m = $('#side .it[data-side="media"]'); m && m.classList.add("hid"); }
+  document.querySelectorAll(".side .it").forEach(el => el.classList.toggle("on", el.dataset.side === s.side && !el.classList.contains("hid")));
+  $("#tbDual").classList.toggle("on", s.id === "dual" || s.id === "compare");
+  $("#tbTerm").classList.toggle("on", s.id === "terminal");
+  setAddr(s.path.map(p => p === "Documents" && lang === "tr" ? "Belgeler" : p === "Downloads" && lang === "tr" ? "İndirilenler" : p === "Pictures" && lang === "tr" ? "Resimler" : p));
+  sceneEls.forEach(el => el.classList.toggle("on", el.dataset.scene === s.id));
+  const el = sceneEls.find(e => e.dataset.scene === s.id);
+  scenes[s.id] && scenes[s.id](el);
+}
+
+function onScroll() {
+  const story = document.getElementById("story").getBoundingClientRect();
+  const inStory = story.top < innerHeight * 0.5 && story.bottom > innerHeight * 0.5;
+  document.documentElement.style.setProperty("--glow", inStory ? 1 : 0);
+  progressEl.classList.toggle("show", inStory);
+  document.getElementById("nav").classList.toggle("scrolled", scrollY > 20);
+  // The active step is the one crossing the middle of the viewport.
+  // On phones the window sits on top, so read the step under it instead.
+  const mid = innerHeight * (innerWidth <= 860 ? 0.72 : 0.5);
+  let best = 0, bestD = Infinity;
+  [...stepsEl.children].forEach((el, i) => {
+    const r = el.getBoundingClientRect();
+    const d = Math.abs((r.top + r.bottom) / 2 - mid);
+    if (d < bestD) { bestD = d; best = i; }
+  });
+  activate(best);
+}
+addEventListener("scroll", onScroll, { passive: true });
+addEventListener("resize", onScroll);
+
+// ---------------------------------------------------------------- reveals
+let revealObs;
+function observeReveals() {
+  if (!("IntersectionObserver" in window)) { document.querySelectorAll(".reveal").forEach(el => el.classList.add("in")); return; }
+  revealObs && revealObs.disconnect();
+  revealObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); revealObs.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll(".reveal:not(.in)").forEach(el => revealObs.observe(el));
+}
+
+renderText();
+// Steps are built by script, so jump to a #f-… link ourselves once they exist.
+if (location.hash.startsWith("#f-")) { const t = document.querySelector(location.hash); t && t.scrollIntoView({ behavior: "instant", block: "center" }); }
+onScroll();
+</script>
+</body>
+</html>
