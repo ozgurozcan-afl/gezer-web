@@ -3,6 +3,24 @@
     <channel>
         <title>Gezer</title>
         <item>
+            <title>0.4.3</title>
+            <pubDate>Mon, 16 Nov 2026 16:44:09 +0300</pubDate>
+            <sparkle:version>305</sparkle:version>
+            <sparkle:shortVersionString>0.4.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<h3>Düzeltilenler</h3>
+<ul>
+<li><b>Dosyaya tıklamak yine seçiyor:</b> macOS 14 Sonoma'da Ayrıntılar dışındaki görünümlerde (Liste, Döşemeler, Simgeler, Sütunlar, Galeri) bir dosyaya tıklamak onu seçmiyordu; yalnızca çerçeve çizerek seçim çalışıyordu. Artık her görünümde tıklama seçiyor, ⌘/⇧ ile tıklama ve çift tıklama çalışıyor, öğeyi sürüklemek dosyayı sürüklüyor (#84, #85).</li>
+<li><b>Kayan tıklamalar da sayılıyor:</b> tıklarken imleç birkaç nokta kaysa da (fiziksel trackpad tıklaması, Force Click) tıklama seçim olarak işleniyor; seçim çerçevesi ancak 5 nokta ya da daha uzun bir sürüklemeyle başlıyor. Ayrıntılar ve Sütunlar'da satırın herhangi bir yerine tıklamak, Finder'daki gibi o satırı seçiyor.</li>
+<li><b>Sunucuya Bağlan listesi:</b> kayıtlı sunuculara tıklayıp seçmek ve çift tıklayarak bağlanmak macOS 14'te de çalışıyor.</li>
+</ul>
+</body></html>
+]]></description>
+            <enclosure url="https://github.com/ozgurozcan-afl/gezer-web/releases/download/v0.4.3/Gezer-0.4.3.dmg" length="16856186" type="application/octet-stream" sparkle:edSignature="WU4Dyp6iSfqypdfZD5SQFWDwWjgQQGCp+RR/BuF5b4Hj6mbzHp70oe2QtIavN71gHpQmL8i0ibFM1WhsU79dAA=="></enclosure>
+        </item>
+        <item>
             <title>0.4.2</title>
             <pubDate>Mon, 16 Nov 2026 14:43:16 +0300</pubDate>
             <sparkle:version>300</sparkle:version>
