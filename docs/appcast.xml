@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Gezer</title>
+        <item>
+            <title>0.4.1</title>
+            <pubDate>Mon, 16 Nov 2026 14:25:04 +0300</pubDate>
+            <sparkle:version>296</sparkle:version>
+            <sparkle:shortVersionString>0.4.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Added</h3>
+<ul>
+<li><b>Live update checks:</b> Gezer checks for a new version about once a day and offers to install it, with the release notes shown. Nothing is installed without asking. Gezer › Check for Updates… (also in the ⌘K palette) checks right away. In Settings › Updates you can turn automatic checks on or off, choose to download updates automatically (off by default), check now, and see when the last check happened.</li>
+<li><b><code>make publish</code>:</b> <code>scripts/publish-release.sh</code> publishes a release end to end — signed and notarized DMG, GitHub release on gezer-web, the appcast item (with release notes from the CHANGELOG) merged into the feed on its Pages. Every step can be repeated, and <code>ARGS=--dry-run</code> prints the plan only. See docs/releasing.md.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><b>Signed and notarized:</b> Gezer is now signed with the Apple Developer ID and notarized by Apple.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/ozgurozcan-afl/gezer-web/releases/download/v0.4.1/Gezer-0.4.1.dmg" length="16744272" type="application/octet-stream" sparkle:edSignature="WomaV/pUgVSPVtL+2/kdzdJ7kbioFB1VWYuoFCR+jfAVUQ6uruwl3FgrkUUg5raSqVzpUPoUs9/5aZRuiYVhCQ=="></enclosure>
+        </item>
+    </channel>
+</rss>
