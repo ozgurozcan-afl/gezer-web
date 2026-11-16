@@ -533,7 +533,7 @@ footer .small { color: var(--dim); font-size: 12.5px; }
       </a>
       <a class="ghost" href="#story" data-i18n="seeHow">See what it does ↓</a>
     </div>
-    <div class="meta" data-i18n="meta">Free · Version 0.4.0 · macOS 14+ · Developer ID signed & notarized by Apple</div>
+    <div class="meta" data-i18n="meta" data-ver>Free · Version 0.4.1 · 16 November 2026 · macOS 14+ · Apple silicon &amp; Intel · Developer ID signed &amp; notarized by Apple</div>
   </div>
   <div class="scroll-hint" aria-hidden="true"><span></span><em data-i18n="scroll" style="font-style:normal">Scroll</em></div>
 </header>
@@ -652,6 +652,12 @@ footer .small { color: var(--dim); font-size: 12.5px; }
 </div>
 <div class="progress" id="progress" aria-label="Sections"></div>
 
+<section class="pad center" id="news">
+  <h2 class="big-h reveal" data-i18n="newsTitle" data-ver>What's new.</h2>
+  <p class="sub-h reveal" data-i18n="newsSub" data-ver>Version 0.4.1 (16 November 2026) and the 0.4 release before it. Every release is listed on the releases page.</p>
+  <div class="cards" id="newsCards"></div>
+</section>
+
 <section class="pad center" id="more">
   <h2 class="big-h reveal" data-i18n="moreTitle">And the details that make it feel like home.</h2>
   <p class="sub-h reveal" data-i18n="moreSub">Small things you'd notice on day one — all native SwiftUI, all keyboard‑friendly.</p>
@@ -679,7 +685,7 @@ footer .small { color: var(--dim); font-size: 12.5px; }
   <h2 class="big-h reveal"><span class="grad" data-i18n="finalTitle">Start exploring.</span></h2>
   <p class="t reveal" data-i18n="finalText">Free, no account, no tracking. Your files stay where they are — Gezer just helps you get around them faster.</p>
   <a class="btn reveal" href="https://github.com/ozgurozcan-afl/gezer-web/releases/latest/download/Gezer.dmg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-i18n="downloadDmg">Download Gezer.dmg</span></a>
-  <div class="meta reveal" data-i18n="finalMeta">Version 0.4.0 · 16.8 MB · macOS 14 Sonoma or later</div>
+  <div class="meta reveal" data-i18n="finalMeta" data-ver>Version 0.4.1 · 16.7 MB · macOS 14 Sonoma or later · Apple silicon &amp; Intel</div>
   <div class="install">
     <div class="reveal"><div class="n">1</div><b data-i18n="i1t">Download</b><p data-i18n="i1p">Get Gezer.dmg from the button above or the releases page.</p></div>
     <div class="reveal"><div class="n">2</div><b data-i18n="i2t">Drag to Applications</b><p data-i18n="i2p">Open the DMG and drag Gezer onto the Applications folder.</p></div>
@@ -688,7 +694,7 @@ footer .small { color: var(--dim); font-size: 12.5px; }
 </section>
 
 <footer>
-  <div data-i18n="footer1">Gezer 0.4.0 · macOS 14+ · Free · Türkçe & English</div>
+  <div data-i18n="footer1" data-ver>Gezer 0.4.1 · macOS 14+ · Apple silicon &amp; Intel · Free · Türkçe &amp; English</div>
   <div><a href="https://github.com/ozgurozcan-afl/gezer-web/releases" data-i18n="allReleases">All releases &amp; release notes</a></div>
   <div class="small" data-i18n="footer2">Install: open the DMG and drag Gezer to Applications. Not affiliated with Apple or Microsoft.</div>
 </footer>
@@ -702,7 +708,8 @@ const T = {
     docTitle: "Gezer — Explorer-style File Manager for Mac",
     heroTitle: "Your Mac's files, the Explorer way.",
     heroLead: "Gezer is a fast, native file manager with dual panes, tabs, a ⌘K command palette, folder compare and sync, a disk usage map and a built‑in terminal — everything you miss from Windows Explorer, made for macOS.",
-    meta: "Free · Version 0.4.0 · macOS 14+ · Developer ID signed & notarized by Apple",
+    meta: "Free · Version {v} · {d} · macOS 14+ · Apple silicon & Intel · Developer ID signed & notarized by Apple",
+    newsTitle: "What's new.", newsSub: "Version {v} ({d}) and the 0.4 release before it. Every release is listed on the releases page.",
     moreTitle: "And the details that make it feel like home.",
     moreSub: "Small things you'd notice on day one — all native SwiftUI, all keyboard‑friendly.",
     finderTitle: "Gezer & Finder, honestly.",
@@ -715,11 +722,11 @@ const T = {
     finderFine: "Or skip all that: keep Gezer in the Dock and drop folders on it, use Finder's <b>Open With › Gezer</b>, or run <code>open -a Gezer ~/Downloads</code>.",
     finalTitle: "Start exploring.",
     finalText: "Free, no account, no tracking. Your files stay where they are — Gezer just helps you get around them faster.",
-    finalMeta: "Version 0.4.0 · 16.8 MB · macOS 14 Sonoma or later",
+    finalMeta: "Version {v} · {s} · macOS 14 Sonoma or later · Apple silicon & Intel",
     i1t: "Download", i1p: "Get Gezer.dmg from the button above or the releases page.",
     i2t: "Drag to Applications", i2p: "Open the DMG and drag Gezer onto the Applications folder.",
     i3t: "Open and go", i3p: "Signed with Developer ID and notarized by Apple, so it opens without warnings.",
-    footer1: "Gezer 0.4.0 · macOS 14+ · Free · Türkçe & English",
+    footer1: "Gezer {v} · macOS 14+ · Apple silicon & Intel · Free · Türkçe & English",
     allReleases: "All releases & release notes",
     footer2: "Install: open the DMG and drag Gezer to Applications. Not affiliated with Apple or Microsoft.",
     // mock window
@@ -752,7 +759,8 @@ const T = {
     docTitle: "Gezer — Mac için Explorer tarzı dosya yöneticisi",
     heroTitle: "Mac'indeki dosyalar, Explorer rahatlığında.",
     heroLead: "Gezer çift bölmeli, sekmeli, ⌘K komut paletli, klasör karşılaştırma ve eşitleme, disk kullanım haritası ve yerleşik terminali olan hızlı, yerel bir dosya yöneticisi — Windows Explorer'da alıştığın her şey, macOS için.",
-    meta: "Ücretsiz · Sürüm 0.4.0 · macOS 14+ · Developer ID ile imzalı ve Apple onaylı",
+    meta: "Ücretsiz · Sürüm {v} · {d} · macOS 14+ · Apple silicon ve Intel · Developer ID ile imzalı ve Apple onaylı",
+    newsTitle: "Neler yeni.", newsSub: "Sürüm {v} ({d}) ve ondan önceki 0.4 sürümü. Tüm sürümler sürümler sayfasında listelenir.",
     moreTitle: "Kendini evinde hissettiren ayrıntılar.",
     moreSub: "İlk gün fark edeceğin küçük şeyler — tamamı yerel SwiftUI, tamamı klavye dostu.",
     finderTitle: "Gezer ve Finder, açık konuşalım.",
@@ -765,11 +773,11 @@ const T = {
     finderFine: "Ya da hiç uğraşma: Gezer'i Dock'ta tut ve klasörleri üzerine bırak, Finder'da <b>Birlikte aç › Gezer</b>'i kullan ya da <code>open -a Gezer ~/Downloads</code> çalıştır.",
     finalTitle: "Gezmeye başla.",
     finalText: "Ücretsiz, hesap yok, takip yok. Dosyaların olduğu yerde kalır — Gezer sadece aralarında daha hızlı dolaşmanı sağlar.",
-    finalMeta: "Sürüm 0.4.0 · 16,8 MB · macOS 14 Sonoma ya da üstü",
+    finalMeta: "Sürüm {v} · {s} · macOS 14 Sonoma ya da üstü · Apple silicon ve Intel",
     i1t: "İndir", i1p: "Gezer.dmg'yi yukarıdaki düğmeden ya da sürümler sayfasından al.",
     i2t: "Uygulamalar'a sürükle", i2p: "DMG'yi aç ve Gezer'i Uygulamalar klasörüne sürükle.",
     i3t: "Aç ve başla", i3p: "Developer ID ile imzalı ve Apple onaylı; uyarısız açılır.",
-    footer1: "Gezer 0.4.0 · macOS 14+ · Ücretsiz · Türkçe & English",
+    footer1: "Gezer {v} · macOS 14+ · Apple silicon ve Intel · Ücretsiz · Türkçe & English",
     allReleases: "Tüm sürümler ve sürüm notları",
     footer2: "Kurulum: DMG'yi aç ve Gezer'i Uygulamalar'a sürükle. Apple ya da Microsoft ile bağlantısı yoktur.",
     m_cmp_title: "Karşılaştır", m_sync: "Eşitle ▾", m_sync1: "Yeni ve eksikleri kopyala → Sağa", m_sync2: "← Yeni ve eksikleri sola kopyala", m_sync3: "İki yönlü eşitle",
@@ -826,8 +834,8 @@ const STEPS = [
     en: ["Terminal, Git & iCloud", "Your shell, docked under the files.", "Press ⌃` for a real terminal panel running your login shell. It follows you: change folder and it cd's along. Git badges mark modified, added and untracked files; iCloud badges show what's in the cloud and what's on this Mac.", ["Branch, ahead/behind and changes in the status bar", "Download Now / Remove Download for iCloud items", "Read‑only git calls — never writes to your repo"]],
     tr: ["Terminal, Git ve iCloud", "Kabuğun, dosyaların hemen altında.", "⌃`'ye bas, giriş kabuğunu çalıştıran gerçek bir terminal paneli açılsın. Seni izler: klasör değiştir, o da cd yapsın. Git rozetleri değişen, eklenen ve izlenmeyen dosyaları işaretler; iCloud rozetleri neyin bulutta, neyin bu Mac'te olduğunu gösterir.", ["Dal, önde/geride ve değişiklikler durum çubuğunda", "iCloud öğeleri için Şimdi indir / İndirmeyi kaldır", "Git yalnızca okunur — deponuza asla yazmaz"]] },
   { id: "server", icon: "⇅", side: "media", path: ["Media"], accent: ["#6ea2ff", "#9b85ff"],
-    en: ["Connect to Server", "Your NAS, one shortcut away.", "⌃⌘K mounts SMB, AFP, NFS and WebDAV shares — even Windows‑style \\\\host\\share paths. Favorites and recent servers are kept for you; SFTP works too when sshfs is installed.", ["Credentials stay in your macOS keychain", "Mounted shares appear in the sidebar with Eject", "Falls back to Finder if a mount fails"]],
-    tr: ["Sunucuya bağlan", "NAS'ın bir kestirme uzağında.", "⌃⌘K SMB, AFP, NFS ve WebDAV paylaşımlarını bağlar — Windows usulü \\\\host\\share yollarını bile. Sık kullanılan ve son kullanılan sunucular saklanır; sshfs kuruluysa SFTP de çalışır.", ["Kimlik bilgileri macOS anahtar zincirinde kalır", "Bağlanan paylaşımlar kenar çubuğunda Çıkar düğmesiyle", "Bağlanamazsa Finder'a devreder"]] },
+    en: ["Server Manager & SSH", "Your NAS and servers, one shortcut away.", "⌃⌘K mounts SMB, AFP, NFS and WebDAV shares — even Windows‑style \\\\host\\share paths — and browses SFTP, FTP/FTPS and S3 right in the pane. Go › Server Manager… (⇧⌃⌘K) keeps all your saved connections in one window, and can open an SSH terminal on them.", ["Passwords and keys stay in the macOS Keychain", "Import your hosts from ~/.ssh/config", "Mounted shares appear in the sidebar with Eject"]],
+    tr: ["Sunucu yöneticisi ve SSH", "NAS'ın ve sunucuların bir kestirme uzağında.", "⌃⌘K SMB, AFP, NFS ve WebDAV paylaşımlarını bağlar — Windows usulü \\\\host\\share yollarını bile — SFTP, FTP/FTPS ve S3'ü de doğrudan bölmede gezdirir. Git › Sunucu yöneticisi… (⇧⌃⌘K) kayıtlı tüm bağlantılarını tek pencerede tutar ve onlarda SSH terminali açabilir.", ["Parolalar ve anahtarlar macOS Anahtar Zinciri'nde kalır", "~/.ssh/config içindeki sunucularını içe aktar", "Bağlanan paylaşımlar kenar çubuğunda Çıkar düğmesiyle"]] },
 ];
 
 const SIDE = [
@@ -850,11 +858,33 @@ const MORE = [
   ["◧", { en: "Preview pane & Quick Look", tr: "Önizleme bölmesi ve Hızlı Bakış" }, { en: "⌥⌘P shows Explorer's preview pane on the right; Space opens Quick Look anywhere.", tr: "⌥⌘P sağda Explorer'ın önizleme bölmesini açar; Boşluk her yerde Hızlı Bakış'ı açar." }],
   ["●", { en: "Finder tags", tr: "Finder etiketleri" }, { en: "Colored tag dots in every view, shared with Finder, so nothing gets lost between the two.", tr: "Her görünümde renkli etiket noktaları, Finder ile ortak; ikisi arasında hiçbir şey kaybolmaz." }],
   ["↺", { en: "Session restore", tr: "Oturumu geri yükleme" }, { en: "Quit and come back to the same windows, tabs, panes, folders and views. Keeps running like Finder when the last window closes.", tr: "Çık ve aynı pencerelere, sekmelere, bölmelere, klasörlere ve görünümlere geri dön. Son pencere kapanınca Finder gibi çalışmaya devam eder." }],
-  ["◐", { en: "Themes, density & shortcuts", tr: "Tema, yoğunluk ve kestirmeler" }, { en: "Light, dark, accent color, compact to comfortable rows, a “Windows‑like” mode — and every shortcut rebindable, with import/export.", tr: "Açık, koyu, vurgu rengi, sıkışıktan rahata satır yoğunluğu, “Windows benzeri” mod — ve içe/dışa aktarılabilen, değiştirilebilir tüm kestirmeler." }],
+  ["◐", { en: "Graphite look, density & shortcuts", tr: "Grafit görünüm, yoğunluk ve kestirmeler" }, { en: "A calm graphite theme in light and dark with a teal accent (or your system accent), Comfortable or Compact rows, a translucent sidebar — and every shortcut rebindable, with import/export.", tr: "Açık ve koyu modda sakin grafit tema, deniz mavisi vurgu (ya da sistem vurgun), Rahat ya da Sıkı satırlar, yarı saydam kenar çubuğu — ve içe/dışa aktarılabilen, değiştirilebilir tüm kestirmeler." }],
   ["⚡", { en: "Quick actions", tr: "Hızlı eylemler" }, { en: "Rotate and resize images, convert to JPEG/PNG/HEIC, merge into one PDF — in the background, undoable.", tr: "Görüntüleri döndür ve yeniden boyutlandır, JPEG/PNG/HEIC'e dönüştür, tek PDF'te birleştir — arka planda, geri alınabilir." }],
   ["⌫", { en: "A Trash that undoes", tr: "Geri alınabilen Çöp Kutusu" }, { en: "Trash in the sidebar, Put Back for what Gezer moved there, and ⌘Z for every delete.", tr: "Kenar çubuğunda Çöp Kutusu, Gezer'in oraya taşıdıkları için Geri koy ve her silme için ⌘Z." }],
   ["⇥", { en: "Copy to… / Move to…", tr: "Şuraya kopyala… / taşı…" }, { en: "⇧⌘C and ⇧⌘M pick a destination from the other pane, recent places or Quick access.", tr: "⇧⌘C ve ⇧⌘M hedefi diğer bölmeden, son kullanılan yerlerden ya da Hızlı erişimden seçer." }],
+  ["◫", { en: "Gallery & slideshow", tr: "Galeri ve slayt gösterisi" }, { en: "A Gallery view with one large photo or video and a filmstrip, EXIF info with I — and a full-screen slideshow with ⌥⌘Y.", tr: "Tek büyük fotoğraf ya da video ve alt şerit içeren Galeri görünümü, I ile EXIF bilgisi — ve ⌥⌘Y ile tam ekran slayt gösterisi." }],
+  ["⌕", { en: "Find & replace in files", tr: "Dosyalarda bul ve değiştir" }, { en: "Search text or a regular expression across files and folders, review a diff, and replace only what you checked — one Undo step.", tr: "Dosya ve klasörlerde metin ya da düzenli ifade ara, farkı incele, yalnızca işaretlediklerini değiştir — tek Geri al adımı." }],
+  ["▨", { en: "Image Tools", tr: "Görüntü araçları" }, { en: "Convert, resize and strip metadata from many images at once, with a size estimate — undoable as one batch.", tr: "Birçok görüntüyü aynı anda dönüştür, yeniden boyutlandır ve üst verilerini temizle; boyut tahmini var — tek toplu iş olarak geri alınabilir." }],
+  ["↻", { en: "Previous versions", tr: "Önceki sürümler" }, { en: "Browse a file's saved versions and its Time Machine copies, open or copy them out, or restore one — the current file goes to the Trash first.", tr: "Bir dosyanın kayıtlı sürümlerine ve Time Machine kopyalarına göz at, aç ya da kopyala, ya da birini geri yükle — mevcut dosya önce Çöp Kutusu'na gider." }],
+  ["⚙", { en: "Folder rules", tr: "Klasör kuralları" }, { en: "Hazel‑style rules in Settings › Rules: watch a folder and move, rename, tag or trash what matches. Preview first; everything is in History and undoable.", tr: "Ayarlar › Kurallar'da Hazel tarzı kurallar: bir klasörü izle, eşleşenleri taşı, yeniden adlandır, etiketle ya da Çöp Kutusu'na at. Önce önizle; her şey Geçmiş'te ve geri alınabilir." }],
+  ["⚲", { en: "Pinned tabs", tr: "Sabitlenmiş sekmeler" }, { en: "Pin a tab and it reopens at every launch at its folder, and ⌘W won't close it by accident.", tr: "Bir sekmeyi sabitle; her açılışta klasöründe yeniden açılır ve ⌘W yanlışlıkla kapatmaz." }],
+  ["▤", { en: "Shelf", tr: "Raf" }, { en: "⌥⌘S opens a floating shelf: collect files from many folders, then move, copy, compress or drag them out at once.", tr: "⌥⌘S yüzen bir raf açar: birçok klasörden dosya topla, sonra hepsini birden taşı, kopyala, sıkıştır ya da dışarı sürükle." }],
+  ["⛨", { en: "Admin operations", tr: "Yönetici işlemleri" }, { en: "When a copy, move, rename or delete is refused for lack of rights, Try Again as Administrator — and it's still undoable. Permissions are editable in Properties.", tr: "Yetki yüzünden bir kopyalama, taşıma, yeniden adlandırma ya da silme reddedilirse Yönetici olarak yeniden dene — hâlâ geri alınabilir. İzinler Özellikler'de düzenlenebilir." }],
+  ["⇩", { en: "Export listing", tr: "Listeyi dışa aktar" }, { en: "Save a folder's items as CSV, a sortable HTML table, Markdown or a text tree, with the columns you choose.", tr: "Bir klasörün öğelerini seçtiğin sütunlarla CSV, sıralanabilir HTML tablo, Markdown ya da metin ağacı olarak kaydet." }],
+  ["▭", { en: "Marquee select in Columns", tr: "Sütunlarda çerçeveyle seçim" }, { en: "Drag on empty space in a column view to rubber‑band select, just like in the other views.", tr: "Sütun görünümünde boş alanda sürükleyerek çerçeveyle seç; diğer görünümlerdeki gibi." }],
   ["TR", { en: "Türkçe & English", tr: "Türkçe ve İngilizce" }, { en: "A full Turkish UI with Explorer's own terminology. Follows your Mac's language, or pick one in Settings.", tr: "Explorer'ın kendi terimleriyle eksiksiz Türkçe arayüz. Mac'inin dilini izler ya da Ayarlar'dan seç." }],
+];
+
+const NEWS = [
+  ["✓", "0.4.1", { en: "Signed & notarized", tr: "İmzalı ve Apple onaylı" }, { en: "Signed with an Apple Developer ID and notarized by Apple, so it opens with no Gatekeeper warning.", tr: "Apple Developer ID ile imzalı ve Apple tarafından onaylı; Gatekeeper uyarısı olmadan açılır." }],
+  ["⟳", "0.4.1", { en: "Automatic update checks", tr: "Otomatik güncelleme denetimi" }, { en: "Gezer checks about once a day and offers the new version with its release notes; nothing installs without asking. Gezer › Check for Updates… (or ⌘K) checks right away.", tr: "Gezer günde bir kez kadar denetler ve yeni sürümü sürüm notlarıyla sunar; sormadan hiçbir şey kurulmaz. Gezer › Güncellemeleri denetle… (ya da ⌘K) hemen denetler." }],
+  ["◐", "0.4.0", { en: "A new, calmer design", tr: "Yeni, daha sakin tasarım" }, { en: "Graphite theme with a calm teal accent (or the system accent), Comfortable or Compact row density, and a translucent sidebar like Finder's.", tr: "Sakin bir deniz mavisi vurgulu (ya da sistem vurgulu) grafit tema, Rahat ya da Sıkı satır yoğunluğu ve Finder'daki gibi yarı saydam kenar çubuğu." }],
+  ["▭", "0.4.0", { en: "Gezer's own card-style tabs", tr: "Gezer'in kendi kart tarzı sekmeleri" }, { en: "A tab strip under the toolbar that's easy to see in dark mode: drag to reorder or move between windows, drop files on a tab, ⌘1…⌘9 to switch.", tr: "Koyu modda da rahat seçilen, araç çubuğunun altında bir sekme şeridi: sırala ya da pencereler arasında taşı, dosyaları sekmeye bırak, geçiş için ⌘1…⌘9." }],
+  ["⇅", "0.4.0", { en: "Server Manager", tr: "Sunucu yöneticisi" }, { en: "One window for saved SFTP, FTP, S3, SMB and other connections, with groups, favorites and Test Connection. Secrets stay in the Keychain; import your ~/.ssh/config hosts.", tr: "Kayıtlı SFTP, FTP, S3, SMB ve diğer bağlantılar için tek pencere; gruplar, favoriler ve Bağlantıyı dene var. Sırlar Anahtar Zinciri'nde kalır; ~/.ssh/config sunucularını içe aktar." }],
+  ["›_", "0.4.0", { en: "SSH terminal", tr: "SSH terminali" }, { en: "Open an SSH session in the terminal panel from any server, with quick commands per server and support for old legacy servers. Gezer never stores or types your passwords.", tr: "Herhangi bir sunucudan terminal panelinde SSH oturumu aç; sunucu başına hızlı komutlar ve eski sunucular için uyumluluk var. Gezer parolalarını asla saklamaz ya da yazmaz." }],
+  ["◧", "0.4.0", { en: "Remote preview", tr: "Uzak önizleme" }, { en: "The preview pane and Quick Look now work on SFTP, FTP and S3 files, fetching only the start of big text files.", tr: "Önizleme bölmesi ve Hızlı Bakış artık SFTP, FTP ve S3 dosyalarında çalışıyor; büyük metin dosyalarının yalnızca başını getirir." }],
+  ["☰", "0.4.0", { en: "Cleaner menus", tr: "Temizlenmiş menüler" }, { en: "Every menu item was audited and fixed, there is one File › New menu, and the status bar buttons now carry short titles.", tr: "Her menü öğesi gözden geçirilip düzeltildi, tek bir Dosya › Yeni menüsü var ve durum çubuğu düğmeleri artık kısa başlıklar taşıyor." }],
+  ["⬡", "0.4.0", { en: "Intel and Apple silicon", tr: "Intel ve Apple silicon" }, { en: "Gezer is now a universal app: it runs on Apple silicon and Intel Macs with macOS 14 or later.", tr: "Gezer artık evrensel bir uygulama: macOS 14 ya da üstü olan Apple silicon ve Intel Mac'lerde çalışır." }],
 ];
 
 const CMDS = [
@@ -875,6 +905,12 @@ let lang = "en";
 try { const s = localStorage.getItem("gezer-lang"); if (s === "en" || s === "tr") lang = s; else throw 0; }
 catch (e) { lang = (navigator.language || "en").toLowerCase().startsWith("tr") ? "tr" : "en"; }
 const L = () => T[lang];
+// Latest release. Hard-coded fallback; refreshed from ./appcast.xml below.
+const REL = { v: "0.4.1", t: new Date("2026-11-16T12:00:00Z"), bytes: 16744272 };
+const relFill = str => str
+  .replace(/\{v\}/g, REL.v)
+  .replace(/\{d\}/g, REL.t.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-GB", { day: "numeric", month: "long", year: "numeric" }))
+  .replace(/\{s\}/g, num((REL.bytes / 1e6).toFixed(1)) + " MB");
 const num = s => lang === "tr" ? s.replace(/(\d)\.(\d)/g, "$1,$2") : s;
 
 // ---------------------------------------------------------------- build DOM
@@ -892,7 +928,7 @@ function renderText() {
   document.title = L().docTitle;
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const v = L()[el.dataset.i18n];
-    if (typeof v === "string") el.textContent = v;
+    if (typeof v === "string") el.textContent = relFill(v);
   });
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = L()[el.dataset.i18nHtml]; });
   document.querySelectorAll(".lang button").forEach(b => { const on = b.dataset.lang === lang; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
@@ -908,6 +944,8 @@ function renderText() {
       : `<div class="it${r[0] === "media" ? " hid" : ""}" data-side="${r[0]}"><span class="ic">${r[1]}</span>${r[2][lang]}${r[0] === "media" ? '<span class="ej">⏏</span>' : ""}</div>`).join("");
   document.getElementById("cards").innerHTML = MORE.map(m =>
     `<div class="feat reveal"><div class="e" aria-hidden="true">${m[0]}</div><h3>${m[1][lang]}</h3><p>${m[2][lang]}</p></div>`).join("");
+  document.getElementById("newsCards").innerHTML = NEWS.map(m =>
+    `<div class="feat reveal"><div class="e" aria-hidden="true">${m[0]}</div><h3>${m[2][lang]} <small style="color:var(--muted);font-weight:500;font-size:13px">· ${m[1]}</small></h3><p>${m[3][lang]}</p></div>`).join("");
   document.getElementById("fYes").innerHTML = L().fYes.map(x => `<li><span>${x}</span></li>`).join("");
   document.getElementById("fNo").innerHTML = L().fNo.map(x => `<li><span>${x}</span></li>`).join("");
   observeReveals();
@@ -1207,6 +1245,23 @@ function observeReveals() {
 }
 
 renderText();
+// Self-updating version: read the newest item of the Sparkle appcast (same origin).
+// On any failure the hard-coded REL above stays.
+fetch("appcast.xml", { cache: "no-cache" }).then(r => r.ok ? r.text() : Promise.reject()).then(txt => {
+  const xml = new DOMParser().parseFromString(txt, "text/xml");
+  const item = xml.getElementsByTagName("item")[0];
+  if (!item) return;
+  const NS = "http://www.andymatuschak.org/xml-namespaces/sparkle";
+  const pick = n => { const e = item.getElementsByTagNameNS(NS, n)[0] || item.getElementsByTagName("sparkle:" + n)[0]; return e ? e.textContent.trim() : ""; };
+  const v = pick("shortVersionString");
+  if (!/^\d+(\.\d+){1,3}$/.test(v)) return;
+  REL.v = v;
+  const pd = item.getElementsByTagName("pubDate")[0], t = pd && new Date(pd.textContent.trim());
+  if (t && !isNaN(t)) REL.t = t;
+  const enc = item.getElementsByTagName("enclosure")[0], len = enc && parseInt(enc.getAttribute("length"), 10);
+  if (len > 0) REL.bytes = len;
+  document.querySelectorAll("[data-ver]").forEach(el => { const x = L()[el.dataset.i18n]; if (typeof x === "string") el.textContent = relFill(x); });
+}).catch(() => {});
 // Steps are built by script, so jump to a #f-… link ourselves once they exist.
 if (location.hash.startsWith("#f-")) { const t = document.querySelector(location.hash); t && t.scrollIntoView({ behavior: "instant", block: "center" }); }
 onScroll();
