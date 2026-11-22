@@ -3,6 +3,22 @@
     <channel>
         <title>Gezer</title>
         <item>
+            <title>0.4.6</title>
+            <pubDate>Sun, 22 Nov 2026 11:57:13 +0300</pubDate>
+            <sparkle:version>320</sparkle:version>
+            <sparkle:shortVersionString>0.4.6</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<h3>Düzeltilenler</h3>
+<ul>
+<li><b>Uzun kullanımda bellek artık büyümüyor:</b> listede gösterilen her klasörün simgesi bellekte birikiyordu ve her pencere güncellemesi geride bir kayıt bırakıyordu. Aynı görünen klasörler artık tek bir simgeyi paylaşıyor. Ayrıntılar görünümünde 150 sekme açılıp kapatıldığında bellek 7 MB yerine yaklaşık 2,5 MB artıyor (#89).</li>
+</ul>
+</body></html>
+]]></description>
+            <enclosure url="https://github.com/ozgurozcan-afl/gezer-web/releases/download/v0.4.6/Gezer-0.4.6.dmg" length="16895758" type="application/octet-stream" sparkle:edSignature="kqVzJG7RCEHEa/mXyXexFVZr0IhjoYs94NAJP3fCpKb3ZdkF2katORqeaAbYXkpeyd6M4kmS6llu7BTChtNGDg=="></enclosure>
+        </item>
+        <item>
             <title>0.4.5</title>
             <pubDate>Sun, 22 Nov 2026 04:58:07 +0300</pubDate>
             <sparkle:version>315</sparkle:version>
