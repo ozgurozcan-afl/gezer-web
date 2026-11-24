@@ -3,6 +3,23 @@
     <channel>
         <title>Gezer</title>
         <item>
+            <title>0.4.7</title>
+            <pubDate>Tue, 24 Nov 2026 18:40:58 +0300</pubDate>
+            <sparkle:version>327</sparkle:version>
+            <sparkle:shortVersionString>0.4.7</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<h3>Düzeltilenler</h3>
+<ul>
+<li><b>Kaydırınca tıklama artık bozulmuyor:</b> Büyük simgeler, Döşemeler ve Liste görünümlerinde uzun bir klasörde kaydırıp geri gelince ya da dosya silince tıklamalar dosya seçmeyi bırakabiliyordu. Tıklanan öğe artık ızgara düzeninden bulunuyor (#90).</li>
+<li><b>Büyük seçimlerde sınır yok:</b> Gruplama açıkken seçim dikdörtgeni yalnızca ekranda çizilmiş öğeleri seçiyordu, bu yüzden büyük seçimler bir yerde duruyor gibiydi. Artık kapsadığı her öğeyi seçiyor. Çöp Sepetine taşıdıktan sonra Finder'daki gibi yerine geçen dosya seçiliyor (#91).</li>
+</ul>
+</body></html>
+]]></description>
+            <enclosure url="https://github.com/ozgurozcan-afl/gezer-web/releases/download/v0.4.7/Gezer-0.4.7.dmg" length="16934754" type="application/octet-stream" sparkle:edSignature="0KqfHrGOEtWyIH4ZYO4CpGac8YPLdxMYwKLhrESWsj+YV852yaJeaZLgAOq192GBbMp6ySL10unUMiun0gdpCw=="></enclosure>
+        </item>
+        <item>
             <title>0.4.6</title>
             <pubDate>Sun, 22 Nov 2026 11:57:13 +0300</pubDate>
             <sparkle:version>320</sparkle:version>
